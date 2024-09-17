@@ -60,7 +60,7 @@ class LoginSing extends StatelessWidget {
                     style: TextStyle(
                       color: Color(0xFF8400FF),
                       fontSize: 25,
-                    ),
+                    ),//
                   ),
                 ),
               ),
