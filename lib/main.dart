@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:vita_valore/login_sign.dart';
+import 'package:vita_valore/agua.dart';
 
 void main() {
   runApp(const MaterialApp(
     title: 'Vita Valore',
     debugShowCheckedModeBanner: false,
-    home: LoginSing(),
+    home: AguaPage(),
   ));
 }

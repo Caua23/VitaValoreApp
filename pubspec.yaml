@@ -18,3 +18,12 @@
     assets:
       - assets/activities.json
       - assets/VitaValoreLogo.jpeg
+      - assets/Ze_gotinha_da_agua.png
+
+    fonts:
+    - family: GlacialInd
+      fonts:
+        - asset: assets/fonts/glacial-indifference-2/GlacialIndifference-Bold.otf
+          weight: 700
+        - asset: assets/fonts/glacial-indifference-2/GlacialIndifference-Regular.otf
+          weight: 400
