@@ -7,13 +7,27 @@ class AguaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      bottomNavigationBar: BottomAppBar(
+        color: const Color.fromARGB(255, 132, 0, 255),
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            ElevatedButton(onPressed: () {}, child: const Text("1")),
+            ElevatedButton(onPressed: () {}, child: const Text("2")),
+            ElevatedButton(onPressed: () {}, child: const Text("3")),
+            ElevatedButton(onPressed: () {}, child: const Text("4")),
+            ElevatedButton(onPressed: () {}, child: const Text("5")),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildHeader(),
             _buildWaterIntakeBox(),
-            _buildBottomContainer(),
+            // _buildBottomContainer(),
           ],
         ),
       ),
@@ -118,19 +132,6 @@ class AguaPage extends StatelessWidget {
         ),
         const SizedBox(width: 10),
       ],
-    );
-  }
-
-  Widget _buildBottomContainer() {
-    return Transform.translate(
-      offset: const Offset(0, 34),
-      child: Container(
-        width: 400,
-        height: 40,
-        decoration: const BoxDecoration(
-          color: Color.fromRGBO(132, 0, 255, 1),
-        ),
-      ),
     );
   }
 }

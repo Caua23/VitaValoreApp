@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:vita_valore/agua.dart';
-import 'package:vita_valore/cadastro.dart';
+import 'package:vita_valore/agua.dart';
+// import 'package:vita_valore/login_sign.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -8,9 +8,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-    title: 'Vita Valore',
-    debugShowCheckedModeBanner: false,
-    home: CadastroPage(),
-  );
+      title: 'Vita Valore',
+      debugShowCheckedModeBanner: false,
+      home: AguaPage(),
+    );
   }
 }

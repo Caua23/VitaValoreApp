@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vita_valore/cadastro.dart';
 import 'package:vita_valore/login.dart';
 
 class LoginSing extends StatelessWidget {
@@ -28,7 +29,7 @@ class LoginSing extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 0),
                     child: Image.asset(
-                      'assets/VitaValoreLogo2.jpeg',
+                      'assets/VitaValoreLogo2.png',
                       width: 150, // Largura da imagem
                       height: 150,
                     ),
@@ -64,6 +65,10 @@ class LoginSing extends StatelessWidget {
                       borderRadius: BorderRadius.circular(80),
                       color: const Color.fromARGB(255, 0, 0, 0),
                     ),
+
+                    //Sing in
+                    //Sing in
+
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -77,7 +82,7 @@ class LoginSing extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
+                                builder: (context) => const CadastroPage(),
                               ),
                             );
                           },
@@ -126,6 +131,9 @@ class LoginSing extends StatelessWidget {
                               ),
                             );
                           },
+
+                          //Login
+                          //Login
                           child: const Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 25, vertical: 2),
