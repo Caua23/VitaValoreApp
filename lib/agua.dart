@@ -1,4 +1,14 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+List<Widget> _itensnavigationBar = [
+  Image.asset('assets/agua.png', scale: 3),
+  Image.asset('assets/calendario.png', scale: 3),
+  Image.asset('assets/apple.png', scale: 3),
+  Image.asset('assets/carrinho.png', scale: 3),
+  Image.asset('assets/Drawer.png', scale: 3),
+];
 
 class AguaPage extends StatelessWidget {
   const AguaPage({super.key});
@@ -7,19 +17,57 @@ class AguaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      bottomNavigationBar: BottomAppBar(
-        color: const Color.fromARGB(255, 132, 0, 255),
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            ElevatedButton(onPressed: () {}, child: const Text("1")),
-            ElevatedButton(onPressed: () {}, child: const Text("2")),
-            ElevatedButton(onPressed: () {}, child: const Text("3")),
-            ElevatedButton(onPressed: () {}, child: const Text("4")),
-            ElevatedButton(onPressed: () {}, child: const Text("5")),
-          ],
-        ),
+      drawer: const Drawer(
+        child: Text(""),
+      ),
+      // bottomNavigationBar: BottomAppBar(
+      //   color: const Color.fromARGB(255, 132, 0, 255),
+      //   height: 60,
+      //   child: Container(
+      //     // padding: const EdgeInsets.all(20),
+      //     color: const Color.fromARGB(255, 0, 0, 0),
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //       children: [
+      //         ElevatedButton(
+      //             onPressed: () {},
+      //             style: const ButtonStyle(
+      //                 backgroundColor:
+      //                     WidgetStatePropertyAll(Colors.transparent)),
+      //             child: const Image(image: AssetImage('assets/agua.png'))),
+      //         ElevatedButton(
+      //             onPressed: () {},
+      //             style: const ButtonStyle(
+      //                 backgroundColor:
+      //                     WidgetStatePropertyAll(Colors.transparent)),
+      //             child:
+      //                 const Image(image: AssetImage('assets/calendario.png'))),
+      //         ElevatedButton(
+      //             onPressed: () {},
+      //             style: const ButtonStyle(
+      //                 backgroundColor:
+      //                     WidgetStatePropertyAll(Colors.transparent)),
+      //             child: const Image(image: AssetImage('assets/apple.png'))),
+      //         ElevatedButton(
+      //             onPressed: () {},
+      //             style: const ButtonStyle(
+      //                 backgroundColor:
+      //                     WidgetStatePropertyAll(Colors.transparent)),
+      //             child: const Image(image: AssetImage('assets/carrinho.png'))),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        buttonBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        color: const Color.fromARGB(255, 255, 255, 255),
+        items: _itensnavigationBar,
+        onTap: (index) {
+          if (kDebugMode) {
+            print(index);
+          }
+        },
       ),
       body: Center(
         child: Column(
@@ -112,7 +160,7 @@ class AguaPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const SizedBox(width: 10),
+        const SizedBox(width: 30),
         Text(
           time,
           style: const TextStyle(
@@ -130,7 +178,7 @@ class AguaPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 30),
       ],
     );
   }
