@@ -66,6 +66,8 @@ O **Vita Valore** é um aplicativo mobile projetado para ajudar os usuários a g
 - **Planejamento de Rotina Profissional**: Funcionalidades para organizar atividades profissionais e aumentar a produtividade.
 - **Controle de Dieta**: Auxilia os usuários no planejamento e controle de refeições para uma dieta saudável.
 
+
+
 ## Futuras Atualizações
 
 O aplicativo **Vita Valore** continuará a evoluir, adicionando mais funcionalidades para ajudar os usuários na gestão pessoal, incluindo monitoramento avançado de saúde, notificações de rotina e planos de dieta personalizados.
