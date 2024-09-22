@@ -21,25 +21,46 @@ List<Widget> _pages = <Widget>[
 ];
 
 class _PrincipalState extends State<Principal> {
-  int _selectedIndex = 0; //New
+  int _selectedIndex = 0;
+
   @override
-  // 'assets/VitaValoreLogo.jpeg',
   Widget build(BuildContext context) {
+    // Verifica se a página de Comida está selecionada
+    bool isComidaPage = _selectedIndex == 2;
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Row(
-          children: [
-            SizedBox(
-              height: 60,
-              child: Image.asset(
-                'assets/VitaValoreLogo2.png',
-                fit: BoxFit.contain, // Mantém a proporção da imagem
+
+        title: isComidaPage
+            ? const Center(
+                child: Text(
+                  "Calendário Diario",
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontFamily: 'assets/fonts/Monserrat',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            : Row(
+                children: [
+                  SizedBox(
+                    height: 60,
+                    child: Image.asset(
+                      'assets/VitaValoreLogo2.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        // Muda a cor do AppBar se estiver na página de Comida
+        backgroundColor: isComidaPage
+            ? const Color.fromARGB(
+                255, 132, 0, 255) // Cor verde para a página de comida
+            : const Color.fromARGB(
+                255, 0, 0, 0), // Cor preta para as outras páginas
         iconTheme: const IconThemeData(
           color: Color.fromARGB(255, 255, 255, 255),
         ),

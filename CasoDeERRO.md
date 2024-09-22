@@ -1,4 +1,10 @@
-Caso de algum erro de :
+
+# Erros comuns: 
+## Código todo vermelho e com erros?
+
+- Abra o arquivo [pubspec.yaml](./pubspec.yaml) e pressione `Ctrl + S` para salvá-lo. Isso irá importar todas as dependências corretamente.
+
+## Erro de :
 ```
     ../../AppData/Local/Pub/Cache/hosted/pub.dev/fancy_bottom_navigation-0.3.3/lib/fancy_bottom_navigation.dart:111:7: Error: No named        
 parameter with the name 'overflow'.

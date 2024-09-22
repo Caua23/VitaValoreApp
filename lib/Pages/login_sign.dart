@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vita_valore/cadastro.dart';
-import 'package:vita_valore/login.dart';
+import 'package:vita_valore/Pages/cadastro.dart';
+import 'package:vita_valore/Pages/login.dart';
 
 class LoginSing extends StatelessWidget {
   const LoginSing({super.key});

@@ -61,12 +61,38 @@ class _AguaPageState extends State<AguaPage> {
 
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildHeader(),
             const Spacer(),
+            const SizedBox(height: 50),
             _buildWaterIntakeBox(),
             const Spacer(),
+            const SizedBox(height: 20),
+
+            Container(
+              padding: const EdgeInsets.only(right: 20),
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 23, vertical: 23)),
+                  backgroundColor: WidgetStateProperty.all(
+                    const Color.fromARGB(255, 91, 0, 196),
+                  ),
+                  shape: WidgetStateProperty.all(
+                    const CircleBorder(),
+                  ),
+                ),
+                onPressed: () {},
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 25,
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
             // _buildBottomContainer(),
           ],
@@ -86,13 +112,6 @@ class _AguaPageState extends State<AguaPage> {
             height: 140,
           ),
         ),
-        // Transform.translate(
-        //   offset: const Offset(-90, -10),
-        //   child: Image.asset(
-        //     'assets/VitaValoreLogo.jpeg',
-        //     height: 60,
-        //   ),
-        // ),
         _buildHeaderText("1h26min", const Offset(105, 45), 15),
         _buildHeaderText("800ml", const Offset(-35, 190), 13),
         _buildHeaderText("1.600ml", const Offset(145, 190), 16),
@@ -137,11 +156,11 @@ class _AguaPageState extends State<AguaPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AguaPage._buildWaterIntakeRow("8:00", "400ml"),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             AguaPage._buildWaterIntakeRow("12:00", "400ml"),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             AguaPage._buildWaterIntakeRow("16:00", "400ml"),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             AguaPage._buildWaterIntakeRow("20:00", "400ml"),
           ],
         ),
