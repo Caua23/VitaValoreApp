@@ -11,7 +11,7 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 102, 255),
+      backgroundColor: Color.fromARGB(255, 0, 0, 0),
       body: Center(
         child: Text('Carrinho'),
       ),

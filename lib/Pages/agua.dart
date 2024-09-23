@@ -79,7 +79,7 @@ class _AguaPageState extends State<AguaPage>
       backgroundColor: Colors.black,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildHeader(),
             AnimatedBuilder(
@@ -89,8 +89,21 @@ class _AguaPageState extends State<AguaPage>
                 return ArcProgress(progress: currentProgress);
               },
             ),
-            const SizedBox(height: 20),
             const Spacer(),
+            Container(
+              padding: const EdgeInsets.only(left: 48, top: 40),
+              alignment: Alignment.center,
+              width: 300,
+              child: const Center(
+                child: Row(
+                  children: [
+                    Text("800ml", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 140),
+                    Text("2000ml", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
             _buildWaterIntakeBox(),
             const Spacer(),
           ],
@@ -107,7 +120,7 @@ class _AguaPageState extends State<AguaPage>
           offset: const Offset(90, -20),
           child: Image.asset(
             'assets/Ze_gotinha_da_agua.png',
-            height: 135,
+            height: 125,
           ),
         ),
       ],
@@ -118,7 +131,7 @@ class _AguaPageState extends State<AguaPage>
     return Transform.translate(
       offset: const Offset(0, 20),
       child: Container(
-        width: 290,
+        width: 300,
         height: 220,
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 6, 0, 12),

@@ -5,6 +5,8 @@ import 'package:vita_valore/Pages/agua.dart';
 import 'package:vita_valore/Pages/calendario.dart';
 import 'package:vita_valore/Pages/carrinho.dart';
 import 'package:vita_valore/Pages/comida.dart';
+import 'package:vita_valore/Pages/configuracao.dart';
+import 'package:vita_valore/Pages/conta.dart';
 
 class Principal extends StatefulWidget {
   const Principal({super.key});
@@ -34,14 +36,23 @@ class _PrincipalState extends State<Principal> {
 
         title: isComidaPage
             ? const Center(
-                child: Text(
-                  "Calendário Diario",
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white,
-                    fontFamily: 'assets/fonts/Monserrat',
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 45,
+                    ),
+                    Text(
+                      "Calendário Diario",
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontFamily: 'assets/fonts/Monserrat',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               )
             : Row(
@@ -59,16 +70,91 @@ class _PrincipalState extends State<Principal> {
               ),
         // Muda a cor do AppBar se estiver na página de Comida
         backgroundColor: isComidaPage
-            ? const Color.fromARGB(
-                255, 132, 0, 255) // Cor verde para a página de comida
-            : const Color.fromARGB(
-                255, 0, 0, 0), // Cor preta para as outras páginas
+            ? const Color.fromARGB(255, 132, 0, 255)
+            : const Color.fromARGB(255, 0, 0, 0),
         iconTheme: const IconThemeData(
           color: Color.fromARGB(255, 255, 255, 255),
         ),
       ),
-      endDrawer: const Drawer(
-        backgroundColor: Color.fromARGB(255, 91, 0, 196),
+      endDrawer: Drawer(
+        backgroundColor: const Color.fromARGB(255, 78, 0, 167),
+        child: Container(
+          alignment: Alignment.center,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 70),
+                const Icon(
+                  Icons.person,
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  size: 80,
+                ),
+                const SizedBox(height: 70),
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        shadowColor:
+                            const WidgetStatePropertyAll(Colors.transparent),
+                        backgroundColor: WidgetStateProperty.all(
+                            const Color.fromARGB(255, 78, 0, 167)),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ConfiguracaoPage()));
+                      },
+                      child: const Text(
+                        "Configurações",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600),
+                      )),
+                ),
+                const SizedBox(height: 70),
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      shadowColor:
+                          const WidgetStatePropertyAll(Colors.transparent),
+                      backgroundColor: WidgetStateProperty.all(
+                          const Color.fromARGB(255, 78, 0, 167)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ContaPage()));
+                    },
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.email,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text(
+                          "Sua Conta",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
       backgroundColor: Colors.black,
       body: IndexedStack(

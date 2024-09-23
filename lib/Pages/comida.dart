@@ -74,19 +74,25 @@ class _ComidaPageState extends State<ComidaPage> {
     return Container(
       color: const Color.fromARGB(255, 84, 84, 84),
       height: 40,
-      child: const Center(
+      child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            const SizedBox(width: 50),
+            const Text(
               'Alimentação',
               style: TextStyle(
                 fontSize: 25,
                 color: Colors.white,
               ),
             ),
-            SizedBox(width: 10),
-            Icon(Icons.add, color: Colors.white),
+            const SizedBox(width: 20),
+            IconButton(
+              icon: const Icon(Icons.add),
+              color: Colors.white,
+              onPressed: () {},
+            ),
           ],
         ),
       ),
@@ -103,10 +109,11 @@ class _ComidaPageState extends State<ComidaPage> {
         child: Center(
           child: Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Icon(
-                  Icons.edit,
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.edit),
                   color: Colors.white,
                 ),
               ),
@@ -115,7 +122,7 @@ class _ComidaPageState extends State<ComidaPage> {
                 text,
                 style: const TextStyle(color: Colors.white),
               ),
-              const SizedBox(width: 25),
+              const SizedBox(width: 50),
               const Spacer(),
             ],
           ),
