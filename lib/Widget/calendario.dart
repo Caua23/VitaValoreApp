@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vita_valore/models/CalendarioDiario.dart';
+import 'package:vita_valore/models/calendarioDiario.dart';
 
 class CalendarioWidget extends StatefulWidget {
   final List<Item> items;
@@ -24,9 +24,9 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
             child: Column(
               children: [
                 Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 255, 17, 0),
-                    borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                    color: item.color,
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10),
                     ),

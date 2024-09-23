@@ -13,14 +13,14 @@ class Principal extends StatefulWidget {
   State<Principal> createState() => _PrincipalState();
 }
 
-List<Widget> _pages = <Widget>[
-  const AguaPage(),
-  const CalendarioPage(),
-  const ComidaPage(),
-  const CarrinhoPage()
-];
-
 class _PrincipalState extends State<Principal> {
+  final List<Widget> _pages = const [
+    AguaPage(),
+    CalendarioPage(),
+    ComidaPage(),
+    CarrinhoPage()
+  ];
+
   int _selectedIndex = 0;
 
   @override
@@ -50,6 +50,8 @@ class _PrincipalState extends State<Principal> {
                     height: 60,
                     child: Image.asset(
                       'assets/VitaValoreLogo2.png',
+                      cacheHeight: 60,
+                      cacheWidth: 60,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -69,7 +71,10 @@ class _PrincipalState extends State<Principal> {
         backgroundColor: Color.fromARGB(255, 91, 0, 196),
       ),
       backgroundColor: Colors.black,
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
       bottomNavigationBar: FancyBottomNavigation(
         activeIconColor: const Color.fromARGB(255, 255, 255, 255),
         circleColor: const Color.fromARGB(255, 91, 0, 196),
