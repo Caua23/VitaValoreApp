@@ -1,5 +1,6 @@
-// import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:vita_valore/Widget/arc_progress.dart';
+import 'dart:math' as math;
 
 class AguaPage extends StatefulWidget {
   const AguaPage({super.key});
@@ -7,7 +8,8 @@ class AguaPage extends StatefulWidget {
   @override
   State<AguaPage> createState() => _AguaPageState();
 
-  static Widget _buildWaterIntakeRow(String time, String amount) {
+  static Widget _buildWaterIntakeRow(String time, String amount,
+      VoidCallback onPressed, IconData icon, bool isClickable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -29,46 +31,68 @@ class AguaPage extends StatefulWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        IconButton(
+          icon: Icon(icon, color: Colors.white),
+          onPressed: isClickable ? onPressed : null,
+        ),
         const SizedBox(width: 30),
       ],
     );
   }
 }
 
-class _AguaPageState extends State<AguaPage> {
+class _AguaPageState extends State<AguaPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  double progress = 0.0;
+  final double maxProgress = math.pi;
+  List<bool> clickedIcons = List.filled(4, false);
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+  }
+
+  void increaseProgress(int index) {
+    if (!clickedIcons[index]) {
+      setState(() {
+        clickedIcons[index] = true; // Marca o ícone como clicado
+        progress += maxProgress * 0.25; // Cada botão adiciona 25% do máximo
+        if (progress > maxProgress) {
+          progress = maxProgress;
+        }
+      });
+
+      // Inicia a animação do progresso
+      _controller.reset();
+      _controller.forward();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      // bottomNavigationBar: FancyBottomNavigation(
-      //   activeIconColor: const Color.fromARGB(255, 255, 255, 255),
-      //   circleColor: const Color.fromARGB(255, 91, 0, 196),
-      //   barBackgroundColor: const Color.fromARGB(255, 119, 0, 255),
-      //   inactiveIconColor: const Color.fromARGB(255, 255, 255, 255),
-      //   tabs: [
-      //     TabData(iconData: Icons.water_drop, title: ""),
-      //     TabData(iconData: Icons.calendar_month, title: ""),
-      //     TabData(iconData: Icons.food_bank, title: ""),
-      //     TabData(iconData: Icons.shopping_cart, title: ""),
-      //     // TabData(iconData: Icons.menu, title: ""),
-      //   ],
-      //   onTabChangedListener: (position) {
-      //     setState(() {
-      //       // currentPage = position;
-      //     });
-      //   },
-      // ),
-
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildHeader(),
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                double currentProgress = progress * _controller.value;
+                return ArcProgress(progress: currentProgress);
+              },
+            ),
+            const SizedBox(height: 20),
             const Spacer(),
             _buildWaterIntakeBox(),
             const Spacer(),
-            const SizedBox(height: 20),
-            // _buildBottomContainer(),
           ],
         ),
       ),
@@ -83,35 +107,10 @@ class _AguaPageState extends State<AguaPage> {
           offset: const Offset(90, -20),
           child: Image.asset(
             'assets/Ze_gotinha_da_agua.png',
-            height: 140,
+            height: 135,
           ),
         ),
-        // Transform.translate(
-        //   offset: const Offset(-90, -10),
-        //   child: Image.asset(
-        //     'assets/VitaValoreLogo.jpeg',
-        //     height: 60,
-        //   ),
-        // ),
-        _buildHeaderText("1h26min", const Offset(105, 45), 15),
-        _buildHeaderText("800ml", const Offset(-35, 190), 13),
-        _buildHeaderText("1.600ml", const Offset(145, 190), 16),
       ],
-    );
-  }
-
-  Widget _buildHeaderText(String text, Offset offset, double fontSize) {
-    return Transform.translate(
-      offset: offset,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'assets/fonts/GlacialIndifference',
-          fontSize: fontSize,
-          color: const Color.fromARGB(255, 255, 255, 255),
-          fontWeight: FontWeight.bold,
-        ),
-      ),
     );
   }
 
@@ -136,16 +135,42 @@ class _AguaPageState extends State<AguaPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AguaPage._buildWaterIntakeRow("8:00", "400ml"),
-            const SizedBox(height: 20),
-            AguaPage._buildWaterIntakeRow("12:00", "400ml"),
-            const SizedBox(height: 20),
-            AguaPage._buildWaterIntakeRow("16:00", "400ml"),
-            const SizedBox(height: 20),
-            AguaPage._buildWaterIntakeRow("20:00", "400ml"),
+            AguaPage._buildWaterIntakeRow(
+                "8:00",
+                "400ml",
+                () => increaseProgress(0),
+                clickedIcons[0] ? Icons.check : Icons.add_box_outlined,
+                !clickedIcons[0]),
+            const SizedBox(height: 15),
+            AguaPage._buildWaterIntakeRow(
+                "12:00",
+                "400ml",
+                () => increaseProgress(1),
+                clickedIcons[1] ? Icons.check : Icons.add_box_outlined,
+                !clickedIcons[1]),
+            const SizedBox(height: 15),
+            AguaPage._buildWaterIntakeRow(
+                "16:00",
+                "400ml",
+                () => increaseProgress(2),
+                clickedIcons[2] ? Icons.check : Icons.add_box_outlined,
+                !clickedIcons[2]),
+            const SizedBox(height: 15),
+            AguaPage._buildWaterIntakeRow(
+                "20:00",
+                "400ml",
+                () => increaseProgress(3),
+                clickedIcons[3] ? Icons.check : Icons.add_box_outlined,
+                !clickedIcons[3]),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

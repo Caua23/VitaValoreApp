@@ -13,33 +13,56 @@ class Principal extends StatefulWidget {
   State<Principal> createState() => _PrincipalState();
 }
 
-List<Widget> _pages = <Widget>[
-  const AguaPage(),
-  const CalendarioPage(),
-  const ComidaPage(),
-  const CarrinhoPage()
-];
-
 class _PrincipalState extends State<Principal> {
-  int _selectedIndex = 0; //New
+  final List<Widget> _pages = const [
+    AguaPage(),
+    CalendarioPage(),
+    ComidaPage(),
+    CarrinhoPage()
+  ];
+
+  int _selectedIndex = 0;
+
   @override
-  // 'assets/VitaValoreLogo.jpeg',
   Widget build(BuildContext context) {
+    // Verifica se a página de Comida está selecionada
+    bool isComidaPage = _selectedIndex == 2;
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Row(
-          children: [
-            SizedBox(
-              height: 60,
-              child: Image.asset(
-                'assets/VitaValoreLogo2.png',
-                fit: BoxFit.contain, // Mantém a proporção da imagem
+
+        title: isComidaPage
+            ? const Center(
+                child: Text(
+                  "Calendário Diario",
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontFamily: 'assets/fonts/Monserrat',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            : Row(
+                children: [
+                  SizedBox(
+                    height: 60,
+                    child: Image.asset(
+                      'assets/VitaValoreLogo2.png',
+                      cacheHeight: 60,
+                      cacheWidth: 60,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        // Muda a cor do AppBar se estiver na página de Comida
+        backgroundColor: isComidaPage
+            ? const Color.fromARGB(
+                255, 132, 0, 255) // Cor verde para a página de comida
+            : const Color.fromARGB(
+                255, 0, 0, 0), // Cor preta para as outras páginas
         iconTheme: const IconThemeData(
           color: Color.fromARGB(255, 255, 255, 255),
         ),
@@ -48,7 +71,10 @@ class _PrincipalState extends State<Principal> {
         backgroundColor: Color.fromARGB(255, 91, 0, 196),
       ),
       backgroundColor: Colors.black,
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
       bottomNavigationBar: FancyBottomNavigation(
         activeIconColor: const Color.fromARGB(255, 255, 255, 255),
         circleColor: const Color.fromARGB(255, 91, 0, 196),
