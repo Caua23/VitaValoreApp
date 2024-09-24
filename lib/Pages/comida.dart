@@ -17,7 +17,7 @@ class _ComidaPageState extends State<ComidaPage> {
   //   Colors.yellow,
   //   Colors.orange,
   //   Colors.purple,
-  // ]; // Isso é um teste n tirar
+  // ]; // Isso é um teste pro futuro n tirar
 
   final List<Item> items = [
     Item(time: '06:00', nome: 'Acordar', color: Colors.red),
@@ -58,8 +58,8 @@ class _ComidaPageState extends State<ComidaPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildHeader(),
-                    for (var comida in itemsComidaNome) _buildItem(comida),
+                    _header(),
+                    for (var comida in itemsComidaNome) _item(comida),
                   ],
                 ),
               ),
@@ -70,7 +70,7 @@ class _ComidaPageState extends State<ComidaPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _header() {
     return Container(
       color: const Color.fromARGB(255, 84, 84, 84),
       height: 40,
@@ -99,7 +99,7 @@ class _ComidaPageState extends State<ComidaPage> {
     );
   }
 
-  Widget _buildItem(String text) {
+  Widget _item(String text) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(50),
       child: Container(

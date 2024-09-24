@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:vita_valore/principal.dart';
 
 class App extends StatelessWidget {
