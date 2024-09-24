@@ -27,55 +27,55 @@ class _PrincipalState extends State<Principal> {
 
   @override
   Widget build(BuildContext context) {
-    // Verifica se a página de Comida está selecionada
-    bool isComidaPage = _selectedIndex == 2;
+    // Verifica se a página do carrinho está selecionada
+    bool isCarrinho = _selectedIndex == 3;
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-
-        title: isComidaPage
-            ? const Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 45,
-                    ),
-                    Text(
-                      "Calendário Diario",
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontFamily: 'assets/fonts/Monserrat',
-                        fontWeight: FontWeight.w600,
+      appBar: isCarrinho
+          ? null // Esconde o AppBar se estiver na página Carrinho
+          : AppBar(
+              toolbarHeight: 80,
+              title: _selectedIndex == 2
+                  ? const Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 45,
+                          ),
+                          Text(
+                            "Calendário Diario",
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontFamily: 'assets/fonts/Monserrat',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
+                    )
+                  : Row(
+                      children: [
+                        SizedBox(
+                          height: 60,
+                          child: Image.asset(
+                            'assets/VitaValoreLogo2.png',
+                            cacheHeight: 60,
+                            cacheWidth: 60,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )
-            : Row(
-                children: [
-                  SizedBox(
-                    height: 60,
-                    child: Image.asset(
-                      'assets/VitaValoreLogo2.png',
-                      cacheHeight: 60,
-                      cacheWidth: 60,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ],
+              backgroundColor: _selectedIndex == 2
+                  ? const Color.fromARGB(255, 132, 0, 255)
+                  : const Color.fromARGB(255, 0, 0, 0),
+              iconTheme: const IconThemeData(
+                color: Color.fromARGB(255, 255, 255, 255),
               ),
-        // Muda a cor do AppBar se estiver na página de Comida
-        backgroundColor: isComidaPage
-            ? const Color.fromARGB(255, 132, 0, 255)
-            : const Color.fromARGB(255, 0, 0, 0),
-        iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 255, 255, 255),
-        ),
-      ),
+            ),
       endDrawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 78, 0, 167),
         child: Container(
