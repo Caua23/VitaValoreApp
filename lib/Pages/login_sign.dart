@@ -93,8 +93,6 @@ class LoginSing extends StatelessWidget {
                               "Sign In",
                               style: TextStyle(
                                 fontFamily: 'assets/fonts/GlacialIndifference',
-                                color: Color(0xFF8400FF),
-                                fontSize: 25,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

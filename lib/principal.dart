@@ -27,7 +27,7 @@ class _PrincipalState extends State<Principal> {
 
   @override
   Widget build(BuildContext context) {
-    // Verifica se a página do carrinho está selecionada
+    // Verifica se a página de Comida está selecionada
     bool isCarrinho = _selectedIndex == 3;
 
     return Scaffold(
