@@ -56,7 +56,7 @@ class _ComidaPageState extends State<ComidaPage> {
               width: 250,
               child: ElevatedButton(
                   style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(
+                    backgroundColor: WidgetStatePropertyAll(
                         Color.fromARGB(255, 153, 0, 255)),
                   ),
                   onPressed: () {
