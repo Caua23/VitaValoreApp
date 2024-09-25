@@ -89,7 +89,8 @@ class _AguaPageState extends State<AguaPage>
                 return ArcProgress(progress: currentProgress);
               },
             ),
-            const Spacer(),
+            // const Spacer(),
+            const SizedBox(height: 30),
             Container(
               padding: const EdgeInsets.only(left: 48, top: 40),
               alignment: Alignment.center,
@@ -132,7 +133,7 @@ class _AguaPageState extends State<AguaPage>
       offset: const Offset(0, 20),
       child: Container(
         width: 300,
-        height: 220,
+        height: 237,
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 6, 0, 12),
           borderRadius: BorderRadius.circular(20),

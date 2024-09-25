@@ -37,6 +37,9 @@ class _ComidaPageState extends State<ComidaPage> {
 
   @override
   Widget build(BuildContext context) {
+    // var screenWidth = MediaQuery.of(context).size.width;
+    // var screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(
@@ -46,6 +49,7 @@ class _ComidaPageState extends State<ComidaPage> {
             Expanded(
               child: CalendarioWidget(items: items),
             ),
+            const SizedBox(height: 160),
             Container(
               width: 270,
               height: 280,
@@ -64,6 +68,7 @@ class _ComidaPageState extends State<ComidaPage> {
                 ),
               ),
             ),
+            const Spacer(),
           ],
         ),
       ),
