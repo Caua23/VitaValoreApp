@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:vita_valore/Widget/calendario.dart';
 import 'package:vita_valore/models/calendarioDiario.dart';
 
@@ -49,7 +50,31 @@ class _ComidaPageState extends State<ComidaPage> {
             Expanded(
               child: CalendarioWidget(items: items),
             ),
-            const SizedBox(height: 160),
+            const Spacer(),
+            SizedBox(
+              height: 30,
+              width: 250,
+              child: ElevatedButton(
+                  style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(
+                        Color.fromARGB(255, 153, 0, 255)),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      items.add(Item(
+                          time: "15:53", nome: "Foda", color: Colors.white));
+                    });
+                  },
+                  child: const Text(
+                    "Adicionar tarefas diarias",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'assets/fonts/Monserrat',
+                      fontSize: 15,
+                    ),
+                  )),
+            ),
+            const SizedBox(height: 10),
             Container(
               width: 270,
               height: 280,
