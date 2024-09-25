@@ -22,11 +22,7 @@
       - assets/VitaValoreLogo.jpeg
       - assets/Ze_gotinha_da_agua.png
       - assets/VitaValoreLogo2.png 
-      - assets/agua.png 
-      - assets/calendario.png 
-      - assets/apple.png 
-      - assets/carrinho.png 
-      - assets/Drawer.png
+      - assets/mais_vendidos.png
 
     fonts:
     - family: GlacialInd

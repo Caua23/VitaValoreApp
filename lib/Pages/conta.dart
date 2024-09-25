@@ -162,7 +162,7 @@ class ContaPage extends StatelessWidget {
                 height: 50,
                 width: 325,
                 child: TextField(
-                  obscureText: true,
+                  keyboardType: TextInputType.number,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     fillColor: Colors.black,
