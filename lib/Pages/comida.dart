@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:vita_valore/Widget/calendario.dart';
 import 'package:vita_valore/models/calendarioDiario.dart';
 
@@ -17,7 +18,7 @@ class _ComidaPageState extends State<ComidaPage> {
   //   Colors.yellow,
   //   Colors.orange,
   //   Colors.purple,
-  // ]; // Isso é um teste n tirar
+  // ]; // Isso é um teste pro futuro n tirar
 
   final List<Item> items = [
     Item(time: '06:00', nome: 'Acordar', color: Colors.red),
@@ -37,6 +38,9 @@ class _ComidaPageState extends State<ComidaPage> {
 
   @override
   Widget build(BuildContext context) {
+    // var screenWidth = MediaQuery.of(context).size.width;
+    // var screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(
@@ -46,6 +50,31 @@ class _ComidaPageState extends State<ComidaPage> {
             Expanded(
               child: CalendarioWidget(items: items),
             ),
+            const Spacer(),
+            SizedBox(
+              height: 30,
+              width: 250,
+              child: ElevatedButton(
+                  style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(
+                        Color.fromARGB(255, 153, 0, 255)),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      items.add(Item(
+                          time: "15:53", nome: "Foda", color: Colors.white));
+                    });
+                  },
+                  child: const Text(
+                    "Adicionar tarefas diarias",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'assets/fonts/Monserrat',
+                      fontSize: 15,
+                    ),
+                  )),
+            ),
+            const SizedBox(height: 10),
             Container(
               width: 270,
               height: 280,
@@ -58,19 +87,20 @@ class _ComidaPageState extends State<ComidaPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildHeader(),
-                    for (var comida in itemsComidaNome) _buildItem(comida),
+                    _header(),
+                    for (var comida in itemsComidaNome) _item(comida),
                   ],
                 ),
               ),
             ),
+            const Spacer(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _header() {
     return Container(
       color: const Color.fromARGB(255, 84, 84, 84),
       height: 40,
@@ -99,7 +129,7 @@ class _ComidaPageState extends State<ComidaPage> {
     );
   }
 
-  Widget _buildItem(String text) {
+  Widget _item(String text) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(50),
       child: Container(

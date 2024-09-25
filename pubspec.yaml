@@ -22,26 +22,7 @@
       - assets/VitaValoreLogo.jpeg
       - assets/Ze_gotinha_da_agua.png
       - assets/VitaValoreLogo2.png 
-      - assets/agua.png 
-      - assets/calendario.png 
-      - assets/apple.png 
-      - assets/carrinho.png 
-      - assets/Drawer.png
-      - assets/mais_vendidos.png
-      - assets/melhores_precos.png
-      - assets/procurar.png
-      - assets/promocoes.png
-      - assets/seus_pedidos.png
-      - assets/blk_100_beef.png
-      - assets/Creatina_300g.png
-      - assets/Chocowheyfer.png
-      - assets/Salgadinho_Mae_Terra.png
-      - assets/Protein_Cookie_Bar.png
-      - assets/brownie_low_carb.png
-      - assets/Mass_Titanium.png
-      - assets/Zero_Lactose_Whey.png
-      - assets/Chocolate_Linea.png
-      
+
     fonts:
     - family: GlacialInd
       fonts:
