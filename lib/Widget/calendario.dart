@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vita_valore/models/calendarioDiario.dart';
 
 class CalendarioWidget extends StatefulWidget {
@@ -20,7 +21,7 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
         spacing: 2.0,
         children: widget.items.map((item) {
           return Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(10.0.sp),
             child: Column(
               children: [
                 Container(
@@ -31,14 +32,14 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
                       topRight: Radius.circular(10),
                     ),
                   ),
-                  width: 80,
-                  height: 25,
+                  width: 80.w,
+                  height: 25.h,
                   child: Center(
                     child: Text(
                       item.time,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
@@ -52,14 +53,14 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
                       bottomRight: Radius.circular(15),
                     ),
                   ),
-                  width: 80,
-                  height: 55,
+                  width: 80.w,
+                  height: 55.h,
                   child: Center(
                     child: Text(
                       item.nome,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
