@@ -32,54 +32,54 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
       preco: 225.00,
     ),
   ];
+
   final List<ItensCompra> listaPetiscos = [
     ItensCompra(
       urlImagem: 'assets/Chocowheyfer.png',
-      nome: 'blk 100 beef',
-      preco: 250.00,
+      nome: 'Chocowheyfer\n 100g',
+      preco: 2.50,
     ),
     ItensCompra(
       urlImagem: 'assets/Salgadinho_Mae_Terra.png',
-      nome: 'Creatina 300g',
-      preco: 140.00,
+      nome: 'Salgadinho Mae Terra',
+      preco: 10.00,
     ),
     ItensCompra(
       urlImagem: 'assets/Protein_Cookie_Bar.png',
-      nome: 'brownie low carb',
-      preco: 178.90,
+      nome: 'Barrinha de proteina 100g',
+      preco: 5.90,
     ),
     ItensCompra(
       urlImagem: 'assets/Zero_Lactose_Whey.png',
-      nome: 'Mass Titanium',
-      preco: 225.00,
+      nome: 'Whey liquido 100g Zero lactose',
+      preco: 15.99,
     ),
   ];
 
   final List<ItensCompra> listaZeroLactose = [
     ItensCompra(
       urlImagem: 'assets/Zero_Lactose_Whey.png',
-      nome: 'blk 100 beef',
-      preco: 250.00,
+      nome: 'Whey liquido 100g ',
+      preco: 15.99,
     ),
     ItensCompra(
       urlImagem: 'assets/Mass_Titanium.png',
-      nome: 'Creatina 300g',
-      preco: 140.00,
-    ),
-    ItensCompra(
-      urlImagem: 'assets/Chocowheyfer.png',
-      nome: 'brownie low carb',
-      preco: 178.90,
-    ),
-    ItensCompra(
-      urlImagem: 'assets/Chocolate_Linea.png',
       nome: 'Mass Titanium',
       preco: 225.00,
     ),
+    ItensCompra(
+      urlImagem: 'assets/Chocowheyfer.png',
+      nome: 'Chocowheyfer 100g',
+      preco: 2.50,
+    ),
+    ItensCompra(
+      urlImagem: 'assets/Chocolate_Linea.png',
+      nome: 'Chocolate Linea ',
+      preco: 14.00,
+    ),
   ];
 /*
-    Não esquecer de trocar isso no futuro
-  
+    Não esquecer de atualizar isso no futuro
 */
   @override
   Widget build(BuildContext context) {

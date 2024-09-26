@@ -15,7 +15,13 @@ class ComidaPage extends StatefulWidget {
 class _ComidaPageState extends State<ComidaPage> {
   final TextEditingController horarioController = TextEditingController();
   final TextEditingController tarefaController = TextEditingController();
+  final TextEditingController nomeAlimentacaoController =
+      TextEditingController();
+  final TextEditingController descAlimentacaoController =
+      TextEditingController();
+
   final List<Item> items = [];
+  final List<String> itemsComidaNome = [];
 
   List<Color> vibrantColors = [
     Colors.red,
@@ -26,14 +32,6 @@ class _ComidaPageState extends State<ComidaPage> {
     Colors.yellow,
     Colors.teal,
     Colors.pink,
-  ];
-
-  final List<String> itemsComidaNome = [
-    'Café Gold',
-    'Lasanha',
-    'Hamburguer',
-    'Café da tarde',
-    'Sobremesa',
   ];
 
   @override
@@ -72,7 +70,7 @@ class _ComidaPageState extends State<ComidaPage> {
             SizedBox(height: 10.h),
             Container(
               width: 270.w,
-              height: 280.h,
+              height: 280.h, // Altura fixa para o container
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: const Color.fromARGB(255, 41, 39, 42),
@@ -83,11 +81,25 @@ class _ComidaPageState extends State<ComidaPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _header(),
-                    for (var comida in itemsComidaNome) _item(comida),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: itemsComidaNome.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              SizedBox(height: 5.h),
+                              _item(itemsComidaNome[index]),
+                              SizedBox(height: 5.h),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
+            SizedBox(height: 10.h),
           ],
         ),
       ),
@@ -115,7 +127,9 @@ class _ComidaPageState extends State<ComidaPage> {
             IconButton(
               icon: const Icon(Icons.add),
               color: Colors.white,
-              onPressed: () {},
+              onPressed: () {
+                criarAlimentacao(context);
+              },
             ),
           ],
         ),
@@ -202,8 +216,8 @@ class _ComidaPageState extends State<ComidaPage> {
                         ),
                         fillColor: Colors.white,
                         filled: true,
-                        labelText: 'Horário',
-                        labelStyle: const TextStyle(color: Colors.black),
+                        hintText: 'Horário',
+                        hintStyle: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -221,8 +235,8 @@ class _ComidaPageState extends State<ComidaPage> {
                         ),
                         fillColor: Colors.white,
                         filled: true,
-                        labelText: 'Tarefa',
-                        labelStyle: const TextStyle(color: Colors.black),
+                        hintText: 'Tarefa',
+                        hintStyle: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -263,5 +277,104 @@ class _ComidaPageState extends State<ComidaPage> {
         );
       },
     );
+  }
+
+  void criarAlimentacao(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: const Color.fromARGB(255, 132, 0, 255),
+            content: SizedBox(
+              height: 300.h,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Adicione Receitas",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontFamily: 'assets/fonts/Monserrat',
+                          fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Coloque uma Receita saudavel para\n você não se esquecer ",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'assets/fonts/Monserrat',
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      child: TextField(
+                          controller: nomeAlimentacaoController,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText: 'Nome da Receita',
+                            hintStyle: const TextStyle(color: Colors.black),
+                          )),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      child: TextField(
+                          controller: descAlimentacaoController,
+                          maxLines: 4,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText: 'Descricao da Receita',
+                            hintStyle: const TextStyle(color: Colors.black),
+                            alignLabelWithHint: true,
+                          )),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: const ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                            Color.fromARGB(255, 170, 0, 255)),
+                        foregroundColor: WidgetStatePropertyAll(Colors.white),
+                      ),
+                      child: const Text(
+                        "Adicionar",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w900),
+                      ),
+                      onPressed: () {
+                        String nome = nomeAlimentacaoController.text;
+                        String descricao = descAlimentacaoController.text;
+
+                        setState(() {
+                          if (nome.isEmpty || descricao.isEmpty) {
+                            return;
+                          }
+                          itemsComidaNome.add(nome);
+                          nomeAlimentacaoController.clear();
+                          descAlimentacaoController.clear();
+                          Navigator.pop(context);
+                        });
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
