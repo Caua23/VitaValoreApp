@@ -9,7 +9,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     ScreenUtil.init(
       context,
-      designSize: const Size(375, 667), // Tamanho do iPhone SE
+      designSize: const Size(375, 667),
       minTextAdapt: true,
       splitScreenMode: true,
     );

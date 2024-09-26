@@ -13,7 +13,7 @@ class AguaPage extends StatefulWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const SizedBox(width: 30),
+        const SizedBox(width: 50),
         Text(
           time,
           style: const TextStyle(
@@ -98,8 +98,8 @@ class _AguaPageState extends State<AguaPage>
               child: const Center(
                 child: Row(
                   children: [
-                    Text("800ml", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 140),
+                    Text("0ml", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 170),
                     Text("2000ml", style: TextStyle(color: Colors.white)),
                   ],
                 ),
@@ -151,28 +151,28 @@ class _AguaPageState extends State<AguaPage>
           children: [
             AguaPage._buildWaterIntakeRow(
                 "8:00",
-                "400ml",
+                "500ml",
                 () => increaseProgress(0),
                 clickedIcons[0] ? Icons.check : Icons.add_box_outlined,
                 !clickedIcons[0]),
             const SizedBox(height: 15),
             AguaPage._buildWaterIntakeRow(
                 "12:00",
-                "400ml",
+                "500ml",
                 () => increaseProgress(1),
                 clickedIcons[1] ? Icons.check : Icons.add_box_outlined,
                 !clickedIcons[1]),
             const SizedBox(height: 15),
             AguaPage._buildWaterIntakeRow(
                 "16:00",
-                "400ml",
+                "500ml",
                 () => increaseProgress(2),
                 clickedIcons[2] ? Icons.check : Icons.add_box_outlined,
                 !clickedIcons[2]),
             const SizedBox(height: 15),
             AguaPage._buildWaterIntakeRow(
                 "20:00",
-                "400ml",
+                "500ml",
                 () => increaseProgress(3),
                 clickedIcons[3] ? Icons.check : Icons.add_box_outlined,
                 !clickedIcons[3]),
