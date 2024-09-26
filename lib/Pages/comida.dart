@@ -1,5 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vita_valore/Widget/calendario.dart';
 import 'package:vita_valore/models/calendarioDiario.dart';
 
@@ -11,36 +13,31 @@ class ComidaPage extends StatefulWidget {
 }
 
 class _ComidaPageState extends State<ComidaPage> {
-  // final List<Color> predefinedColors = [
-  //   Colors.red,
-  //   Colors.green,
-  //   Colors.blue,
-  //   Colors.yellow,
-  //   Colors.orange,
-  //   Colors.purple,
-  // ]; // Isso é um teste pro futuro n tirar
+  final TextEditingController horarioController = TextEditingController();
+  final TextEditingController tarefaController = TextEditingController();
+  final List<Item> items = [];
 
-  final List<Item> items = [
-    Item(time: '06:00', nome: 'Acordar', color: Colors.red),
-    Item(time: '07:00', nome: 'Trabalhar', color: Colors.green),
-    Item(time: '09:50', nome: 'Almoçar', color: Colors.blue),
-    Item(time: '14:00', nome: 'Casa', color: Colors.yellow),
-    Item(time: '16:00', nome: 'Descansar', color: Colors.orange),
+  List<Color> vibrantColors = [
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.purple,
+    Colors.orange,
+    Colors.yellow,
+    Colors.teal,
+    Colors.pink,
   ];
 
   final List<String> itemsComidaNome = [
     'Café Gold',
     'Lasanha',
-    'Hambuerguer',
-    'Cafe da tarde',
+    'Hamburguer',
+    'Café da tarde',
     'Sobremesa',
   ];
 
   @override
   Widget build(BuildContext context) {
-    // var screenWidth = MediaQuery.of(context).size.width;
-    // var screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(
@@ -50,34 +47,32 @@ class _ComidaPageState extends State<ComidaPage> {
             Expanded(
               child: CalendarioWidget(items: items),
             ),
-            const Spacer(),
+            SizedBox(height: 170.h),
             SizedBox(
-              height: 30,
-              width: 250,
+              height: 30.h,
+              width: 250.w,
               child: ElevatedButton(
-                  style: const ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                        Color.fromARGB(255, 153, 0, 255)),
+                style: const ButtonStyle(
+                  backgroundColor:
+                      WidgetStatePropertyAll(Color.fromARGB(255, 153, 0, 255)),
+                ),
+                onPressed: () {
+                  criarAgenda(context);
+                },
+                child: const Text(
+                  "Adicionar tarefas diarias",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'assets/fonts/Monserrat',
+                    fontSize: 15,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      items.add(Item(
-                          time: "15:53", nome: "Foda", color: Colors.white));
-                    });
-                  },
-                  child: const Text(
-                    "Adicionar tarefas diarias",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'assets/fonts/Monserrat',
-                      fontSize: 15,
-                    ),
-                  )),
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
             Container(
-              width: 270,
-              height: 280,
+              width: 270.w,
+              height: 280.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: const Color.fromARGB(255, 41, 39, 42),
@@ -93,7 +88,6 @@ class _ComidaPageState extends State<ComidaPage> {
                 ),
               ),
             ),
-            const Spacer(),
           ],
         ),
       ),
@@ -103,7 +97,7 @@ class _ComidaPageState extends State<ComidaPage> {
   Widget _header() {
     return Container(
       color: const Color.fromARGB(255, 84, 84, 84),
-      height: 40,
+      height: 40.h,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -113,7 +107,7 @@ class _ComidaPageState extends State<ComidaPage> {
             const Text(
               'Alimentação',
               style: TextStyle(
-                fontSize: 25,
+                fontSize: 20,
                 color: Colors.white,
               ),
             ),
@@ -134,8 +128,8 @@ class _ComidaPageState extends State<ComidaPage> {
       borderRadius: BorderRadius.circular(50),
       child: Container(
         color: const Color.fromARGB(255, 166, 166, 166),
-        width: 230,
-        height: 40,
+        width: 230.w,
+        height: 40.h,
         child: Center(
           child: Row(
             children: [
@@ -158,6 +152,116 @@ class _ComidaPageState extends State<ComidaPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Color getStrongColor() {
+    return vibrantColors[Random().nextInt(vibrantColors.length)];
+  }
+
+  void criarAgenda(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 132, 0, 255),
+          content: SizedBox(
+            height: 240.h,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Adicionar tarefas diarias",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontFamily: 'assets/fonts/Monserrat',
+                        fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 3),
+                  const Text(
+                    "Bote apenas tarefas repetitivas.\n Caso seja uma Exeção, bote no \ncalendario Normal.",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontFamily: 'assets/fonts/Monserrat',
+                        fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 50.h,
+                    width: 250.w,
+                    child: TextField(
+                      controller: horarioController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        labelText: 'Horário',
+                        labelStyle: const TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 50.h,
+                    width: 250.w,
+                    child: TextField(
+                      controller: tarefaController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        labelText: 'Tarefa',
+                        labelStyle: const TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  ElevatedButton(
+                      style: const ButtonStyle(),
+                      onPressed: () {
+                        String horario = horarioController.text;
+                        String tarefa = tarefaController.text;
+
+                        setState(() {
+                          if (horario.isEmpty || tarefa.isEmpty) {
+                            return;
+                          }
+
+                          items.add(Item(
+                            time: horario,
+                            nome: tarefa,
+                            color: getStrongColor(),
+                          ));
+                        });
+                        horarioController.clear();
+                        tarefaController.clear();
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Adicionar",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'assets/fonts/Monserrat',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600),
+                      ))
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
