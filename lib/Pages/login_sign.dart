@@ -74,9 +74,9 @@ class LoginSing extends StatelessWidget {
                       children: [
                         const SizedBox(height: 50),
                         ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(
-                                const Color.fromARGB(255, 0, 0, 0)),
+                          style: const ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll(
+                                Color.fromARGB(255, 0, 0, 0)),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -92,6 +92,7 @@ class LoginSing extends StatelessWidget {
                             child: Text(
                               "Sign In",
                               style: TextStyle(
+                                fontSize: 25,
                                 fontFamily: 'assets/fonts/GlacialIndifference',
                                 fontWeight: FontWeight.bold,
                               ),
@@ -125,7 +126,7 @@ class LoginSing extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
+                                builder: (context) =>  LoginPage(),
                               ),
                             );
                           },

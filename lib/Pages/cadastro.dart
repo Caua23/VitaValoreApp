@@ -1,9 +1,25 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:vita_valore/Pages/login.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:vita_valore/models/users.dart';
 
-class CadastroPage extends StatelessWidget {
+class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
 
+  @override
+  State<CadastroPage> createState() => _CadastroPageState();
+}
+
+class _CadastroPageState extends State<CadastroPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passVerificationController =
+      TextEditingController();
+  var responseMessage = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +47,13 @@ class CadastroPage extends StatelessWidget {
                 ),
               ],
             ),
+            Text(
+              responseMessage,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Color.fromARGB(255, 255, 0, 0),
+              ),
+            ),
             const Spacer(),
             Row(
               children: [
@@ -48,6 +71,7 @@ class CadastroPage extends StatelessWidget {
                     height: 50,
                     width: 325,
                     child: TextField(
+                      controller: nameController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         fillColor: Colors.black,
@@ -82,6 +106,8 @@ class CadastroPage extends StatelessWidget {
                     height: 50,
                     width: 325,
                     child: TextField(
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -116,6 +142,8 @@ class CadastroPage extends StatelessWidget {
                     height: 50,
                     width: 325,
                     child: TextField(
+                      obscureText: true,
+                      controller: passwordController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -150,6 +178,8 @@ class CadastroPage extends StatelessWidget {
                     height: 50,
                     width: 325,
                     child: TextField(
+                      obscureText: true,
+                      controller: passVerificationController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -170,7 +200,7 @@ class CadastroPage extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               style: const ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(Colors.black)),
+                  backgroundColor: MaterialStatePropertyAll(Colors.black)),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -184,15 +214,42 @@ class CadastroPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
               ),
             ),
+
+            // botão cadastro
+
             ElevatedButton(
               style: const ButtonStyle(
                 backgroundColor:
-                    WidgetStatePropertyAll(Color.fromARGB(255, 132, 0, 255)),
-                padding: WidgetStatePropertyAll(
+                    MaterialStatePropertyAll(Color.fromARGB(255, 132, 0, 255)),
+                padding: MaterialStatePropertyAll(
                   EdgeInsets.only(left: 70, right: 70, bottom: 20, top: 20),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                String password = passwordController.text;
+                String passwordVer = passVerificationController.text;
+                String name = nameController.text;
+                String email = emailController.text;
+                if (password != passwordVer) {
+                  return setState(() {
+                    responseMessage = "As senhas não são iguais";
+                  });
+                }
+                if (passwordVer == "" ||
+                    password == "" ||
+                    name == "" ||
+                    email == "") {
+                  return setState(() {
+                    responseMessage = "Existe campos vazios Verifique";
+                  });
+                }
+                if (!EmailValidator.validate(email)) {
+                  return setState(() {
+                    responseMessage = "E-mail inválido";
+                  });
+                }
+                sendData(name, email, password);
+              },
               child: const Text(
                 "Cadastrar-se",
                 style: TextStyle(
@@ -208,5 +265,32 @@ class CadastroPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> sendData(name, email, password) async {
+    final newUser = User(name: name, email: email, password: password);
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/auth/user/register'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(newUser.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      return setState(() {
+        responseMessage = "Erro: ${response.body}";
+      });
+    }
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      responseMessage = data.toString();
+      nameController.clear();
+      emailController.clear();
+      passwordController.clear();
+      passVerificationController.clear();
+      return data;
+    }
   }
 }
