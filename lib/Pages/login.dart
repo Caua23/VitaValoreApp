@@ -1,9 +1,22 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:vita_valore/Pages/cadastro.dart';
+import 'package:vita_valore/models/dto/send_login.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  var responseMessage = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,6 +25,13 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            Text(
+              responseMessage,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Color.fromARGB(255, 255, 0, 0),
+              ),
+            ),
             const Spacer(),
             const Row(children: [
               SizedBox(width: 30),
@@ -44,6 +64,8 @@ class LoginPage extends StatelessWidget {
                 height: 50,
                 width: 325,
                 child: TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     fillColor: Colors.black,
@@ -74,6 +96,8 @@ class LoginPage extends StatelessWidget {
                 height: 50,
                 width: 325,
                 child: TextField(
+                  controller: passwordController,
+                  obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     fillColor: Colors.black,
@@ -93,7 +117,7 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
               style: const ButtonStyle(
                 backgroundColor:
-                    WidgetStatePropertyAll(Color.fromARGB(255, 0, 0, 0)),
+                    MaterialStatePropertyAll(Color.fromARGB(255, 0, 0, 0)),
               ),
               onPressed: () {
                 Navigator.push(
@@ -117,12 +141,27 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
               style: const ButtonStyle(
                 backgroundColor:
-                    WidgetStatePropertyAll(Color.fromARGB(255, 132, 0, 255)),
-                padding: WidgetStatePropertyAll(
+                    MaterialStatePropertyAll(Color.fromARGB(255, 132, 0, 255)),
+                padding: MaterialStatePropertyAll(
                   EdgeInsets.only(left: 70, right: 70, bottom: 20, top: 20),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                String password = passwordController.text;
+
+                String email = emailController.text;
+
+                if (password == "" || email == "") {
+                  return setState(() {
+                    responseMessage = "Existe campos vazios Verifique";
+                  });
+                }
+                if (!EmailValidator.validate(email)) {
+                  return setState(() {
+                    responseMessage = "E-mail inválido";
+                  });
+                }
+              },
               child: const Text(
                 "Login",
                 style: TextStyle(
@@ -138,5 +177,30 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> sendData(email, password) async {
+    final newLogin = Login(password: password, email: email);
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/auth/user/register'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(newLogin.toJson()),
+    );
+    if (response.statusCode != 200) {
+      return setState(() {
+        responseMessage = "Erro: ${response.body}";
+      });
+    }
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      responseMessage = data.toString();
+
+      emailController.clear();
+      passwordController.clear();
+      return data;
+    }
   }
 }

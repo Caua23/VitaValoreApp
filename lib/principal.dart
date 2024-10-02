@@ -94,11 +94,11 @@ class _PrincipalState extends State<Principal> {
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                         shadowColor:
-                            const WidgetStatePropertyAll(Colors.transparent),
-                        backgroundColor: WidgetStateProperty.all(
-                            const Color.fromARGB(255, 78, 0, 167)),
+                            MaterialStatePropertyAll(Colors.transparent),
+                        backgroundColor: MaterialStatePropertyAll(
+                            Color.fromARGB(255, 78, 0, 167)),
                       ),
                       onPressed: () {
                         Navigator.push(
@@ -119,11 +119,10 @@ class _PrincipalState extends State<Principal> {
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
-                    style: ButtonStyle(
-                      shadowColor:
-                          const WidgetStatePropertyAll(Colors.transparent),
-                      backgroundColor: WidgetStateProperty.all(
-                          const Color.fromARGB(255, 78, 0, 167)),
+                    style: const ButtonStyle(
+                      shadowColor: MaterialStatePropertyAll(Colors.transparent),
+                      backgroundColor: MaterialStatePropertyAll(
+                          Color.fromARGB(255, 78, 0, 167)),
                     ),
                     onPressed: () {
                       Navigator.push(
