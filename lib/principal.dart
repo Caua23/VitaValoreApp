@@ -1,12 +1,18 @@
+import 'dart:convert';
+
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vita_valore/Pages/agua.dart';
 import 'package:vita_valore/Pages/calendario.dart';
 import 'package:vita_valore/Pages/carrinho.dart';
 import 'package:vita_valore/Pages/comida.dart';
 import 'package:vita_valore/Pages/configuracao.dart';
 import 'package:vita_valore/Pages/conta.dart';
+import 'package:http/http.dart' as http;
+import 'package:vita_valore/Pages/login.dart';
 
 class Principal extends StatefulWidget {
   const Principal({super.key});
@@ -16,11 +22,11 @@ class Principal extends StatefulWidget {
 }
 
 class _PrincipalState extends State<Principal> {
-  final List<Widget> _pages = const [
-    AguaPage(),
-    CalendarioPage(),
-    ComidaPage(),
-    CarrinhoPage()
+  final List<Widget> _pages = [
+    const AguaPage(),
+    const CalendarioPage(),
+    const ComidaPage(),
+    const CarrinhoPage()
   ];
 
   int _selectedIndex = 0;
@@ -28,7 +34,7 @@ class _PrincipalState extends State<Principal> {
   @override
   Widget build(BuildContext context) {
     bool isCarrinho = _selectedIndex == 3;
-
+    verificarUsuario();
     return Scaffold(
       appBar: isCarrinho
           ? null // Esconde o AppBar se estiver na página Carrinho
@@ -180,5 +186,42 @@ class _PrincipalState extends State<Principal> {
         },
       ),
     );
+  }
+
+  Future<bool> verificarUsuario() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+    if (token != null) {
+      final response = await http.post(
+        Uri.parse('${dotenv.env['API_URL']}/auth/user/verification/$token'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'Bearer': token}),
+      );
+      if (response.statusCode != 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+        return false;
+      }
+
+      if (response.statusCode == 200) {
+        jsonDecode(response.body);
+        return true;
+      }
+    }
+
+    if (kDebugMode) {
+      print('Token inválido ou inativo');
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+    return false;
   }
 }

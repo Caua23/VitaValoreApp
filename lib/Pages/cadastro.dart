@@ -226,6 +226,7 @@ class _CadastroPageState extends State<CadastroPage> {
                 ),
               ),
               onPressed: () {
+                print("Botão de cadastro pressionado");
                 String password = passwordController.text;
                 String passwordVer = passVerificationController.text;
                 String name = nameController.text;
@@ -268,29 +269,47 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   Future<void> sendData(name, email, password) async {
-    final newUser = User(name: name, email: email, password: password);
-    final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/auth/user/register'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(newUser.toJson()),
-    );
+    try {
+      final newUser = User(name: name, email: email, password: password);
+      final response = await http.post(
+        Uri.parse('${dotenv.env['API_URL']}/auth/user/register'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(newUser.toJson()),
+      );
+      print("Resposta do servidor: ${response.statusCode} - ${response.body}");
+      if (response.statusCode != 200) {
+        return setState(() {
+          responseMessage = "Erro: ${response.body}";
+        });
+      }
 
-    if (response.statusCode != 200) {
-      return setState(() {
-        responseMessage = "Erro: ${response.body}";
+      if (response.statusCode == 409) {
+        setState(() {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.redAccent,
+              content: Text("Email já está cadastrado no sistema"),
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        });
+      }
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        responseMessage = data.toString();
+        nameController.clear();
+        emailController.clear();
+        passwordController.clear();
+        passVerificationController.clear();
+      }
+    } catch (e) {
+      setState(() {
+        responseMessage = "Erro na requisição: $e";
       });
-    }
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      responseMessage = data.toString();
-      nameController.clear();
-      emailController.clear();
-      passwordController.clear();
-      passVerificationController.clear();
-      return data;
     }
   }
 }

@@ -1,52 +1,27 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:vita_valore/Widget/agua_diaria.dart';
 import 'package:vita_valore/Widget/arc_progress.dart';
 import 'dart:math' as math;
+
+import 'package:vita_valore/models/agua_models.dart';
 
 class AguaPage extends StatefulWidget {
   const AguaPage({super.key});
 
   @override
   State<AguaPage> createState() => _AguaPageState();
-
-  static Widget _buildWaterIntakeRow(String time, String amount,
-      VoidCallback onPressed, IconData icon, bool isClickable) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const SizedBox(width: 50),
-        Text(
-          time,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const Spacer(),
-        Text(
-          amount,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        IconButton(
-          icon: Icon(icon, color: Colors.white),
-          onPressed: isClickable ? onPressed : null,
-        ),
-        const SizedBox(width: 30),
-      ],
-    );
-  }
 }
 
 class _AguaPageState extends State<AguaPage>
     with SingleTickerProviderStateMixin {
+  int valueWaterMl = 0;
   late AnimationController _controller;
   double progress = 0.0;
   final double maxProgress = math.pi;
-  List<bool> clickedIcons = List.filled(4, false);
+
+  List<AguaModels> times = [];
+  List<bool> clickedIcons = [];
 
   @override
   void initState() {
@@ -60,8 +35,8 @@ class _AguaPageState extends State<AguaPage>
   void increaseProgress(int index) {
     if (!clickedIcons[index]) {
       setState(() {
-        clickedIcons[index] = true; // Marca o ícone como clicado
-        progress += maxProgress * 0.25; // Cada botão adiciona 25% do máximo
+        clickedIcons[index] = true;
+        progress += maxProgress * 0.25;
         if (progress > maxProgress) {
           progress = maxProgress;
         }
@@ -89,27 +64,188 @@ class _AguaPageState extends State<AguaPage>
                 return ArcProgress(progress: currentProgress);
               },
             ),
-            // const Spacer(),
             const SizedBox(height: 30),
             Container(
               padding: const EdgeInsets.only(left: 48, top: 40),
               alignment: Alignment.center,
               width: 300,
-              child: const Center(
+              child: Center(
                 child: Row(
                   children: [
-                    Text("0ml", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 170),
-                    Text("2000ml", style: TextStyle(color: Colors.white)),
+                    const Text("0ml", style: TextStyle(color: Colors.white)),
+                    const Spacer(),
+                    Text(
+                      "$valueWaterMl ml",
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ],
                 ),
               ),
             ),
+            // Expanded(
+            //   child: AguaDiaria(
+            //     aguaList: times,
+            //   ),
+            // ),
             _buildWaterIntakeBox(),
             const Spacer(),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 119, 0, 255),
+        shape: const CircleBorder(),
+        onPressed: () {
+          incrementoAgua(context);
+        },
+        child: const Icon(
+          Icons.add,
+          size: 30,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  void incrementoAgua(BuildContext context) {
+    final TextEditingController waterTemp = TextEditingController();
+    String? selectedValue = '200ml';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: const Color.fromARGB(255, 132, 0, 255),
+              title: const Text(
+                'Adicione mais água à sua meta diária',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Qual horário?',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: 100,
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      controller: waterTemp,
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        labelText: '00:00',
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Quantos ml deseja adicionar?',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(height: 10),
+                  DropdownButton<String>(
+                    style: const TextStyle(color: Colors.white),
+                    dropdownColor: const Color.fromARGB(255, 0, 0, 0),
+                    borderRadius: BorderRadius.circular(5),
+                    value: selectedValue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedValue = newValue!;
+                      });
+                    },
+                    items: <String>['200ml', '500ml', '750ml', '1000ml']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 115,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          onPressed: () {
+                            waterTemp.clear();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Cancelar',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 115,
+                        child: ElevatedButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          onPressed: () {
+                            String addedMl =
+                                selectedValue!.replaceAll('ml', '').trim();
+                            valueWaterMl += int.parse(addedMl);
+                            String addedTime = waterTemp.text;
+
+                            if (addedTime.isEmpty) {
+                              return; // Não adicione se o tempo estiver vazio
+                            }
+
+                            setState(() {
+                              times.add(
+                                  AguaModels(time: addedTime, ml: addedMl));
+                              clickedIcons.add(false);
+                            });
+
+                            // Debug para verificar se os itens estão sendo adicionados
+                            if (kDebugMode) {
+                              print(times.toString());
+                              print(times.length);
+                              print(valueWaterMl);
+                            }
+
+                            waterTemp.clear();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Adicionar',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -149,42 +285,14 @@ class _AguaPageState extends State<AguaPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AguaPage._buildWaterIntakeRow(
-                "8:00",
-                "500ml",
-                () => increaseProgress(0),
-                clickedIcons[0] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[0]),
-            const SizedBox(height: 15),
-            AguaPage._buildWaterIntakeRow(
-                "12:00",
-                "500ml",
-                () => increaseProgress(1),
-                clickedIcons[1] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[1]),
-            const SizedBox(height: 15),
-            AguaPage._buildWaterIntakeRow(
-                "16:00",
-                "500ml",
-                () => increaseProgress(2),
-                clickedIcons[2] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[2]),
-            const SizedBox(height: 15),
-            AguaPage._buildWaterIntakeRow(
-                "20:00",
-                "500ml",
-                () => increaseProgress(3),
-                clickedIcons[3] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[3]),
+            Expanded(
+              child: AguaDiaria(
+                aguaList: times,
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

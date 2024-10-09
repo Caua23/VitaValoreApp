@@ -189,9 +189,24 @@ class _LoginPageState extends State<LoginPage> {
       body: jsonEncode(newLogin.toJson()),
     );
     if (response.statusCode != 200) {
-      return setState(() {
-        responseMessage = "Erro: ${response.body}";
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          content: Text('Erro a autenticar'),
+        ),
+      );
+    }
+    if (response.statusCode == 401) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          content: Text('Verifique o e-mail e a senha, algo esta errado'),
+        ),
+      );
     }
 
     if (response.statusCode == 200) {
