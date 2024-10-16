@@ -216,7 +216,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
-
   nested:
     dependency: transitive
     description:
@@ -233,7 +232,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
-
   path_provider_linux:
     dependency: transitive
     description:
@@ -274,6 +272,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.2"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -330,16 +336,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
-
-  provider:
-    dependency: "direct main"
-    description:
-      name: provider
-      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.2"
-
   simple_gesture_detector:
     dependency: transitive
     description:
@@ -438,7 +434,6 @@ packages:
     description:
       name: vm_service
       sha256: "5c5f338a667b4c644744b661f309fb8080bb94b18a7e91ef1dbd343bed00ed6d"
-
       url: "https://pub.dev"
     source: hosted
     version: "14.2.5"

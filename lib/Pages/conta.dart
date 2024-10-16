@@ -1,8 +1,8 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vita_valore/models/users.dart';
 
@@ -14,7 +14,6 @@ class ContaPage extends StatefulWidget {
 }
 
 class _ContaPageState extends State<ContaPage> {
-
   String paisSelecionado = 'Selecione um País';
   String dddSelecionado = '';
   final TextEditingController telefoneController = TextEditingController();
@@ -64,26 +63,120 @@ class _ContaPageState extends State<ContaPage> {
   @override
   void initState() {
     super.initState();
-    telefoneController.addListener(
-      () {
-        if (dddSelecionado.isNotEmpty &&
-            !telefoneController.text.startsWith('($dddSelecionado) ')) {
-          telefoneController.text = '($dddSelecionado) ';
-          telefoneController.selection = TextSelection.fromPosition(
-            TextPosition(offset: telefoneController.text.length),
-          );
-        }
-      },
-    );
+    telefoneController.addListener(() {
+      if (dddSelecionado.isNotEmpty &&
+          !telefoneController.text.startsWith('($dddSelecionado) ')) {
+        telefoneController.text = '($dddSelecionado) ';
+        telefoneController.selection = TextSelection.fromPosition(
+          TextPosition(offset: telefoneController.text.length),
+        );
+      }
+    });
   }
 
-  void _saveData() {
+  Future<dynamic> sendToken(String token) async {
+    var url =
+        Uri.http(dotenv.env['API_URL']!.trim(), '/user/verification/$token');
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({}),
+    );
+
+    if (response.statusCode != 200) {
+      return response.statusCode;
+    }
+
+    var data = jsonDecode(response.body);
+    return data['id'];
+  }
+
+  Future<void> sendData(
+      String name, String email, String password, String numero) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text("Usuário não autenticado."),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final id = await sendToken(token);
+    final update =
+        User(name: name, email: email, password: password, phone: numero);
+
+    var url = Uri.http(dotenv.env['API_URL']!.trim(), "/user/update/$id");
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(update.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text("Ops, algo deu errado. Erro: ${response.body}"),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', data);
+      nomeController.clear();
+      emailController.clear();
+      senhaController.clear();
+      telefoneController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Conta Atualizada com sucesso ${response.body}"),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return data;
+    }
+    return;
+  }
+
+  void _saveData() async {
     String nome = nomeController.text;
     String email = emailController.text;
     String senha = senhaController.text;
-    String telefone = telefoneController.text;
-  }
+    String telefone = telefoneController.text.replaceAll(RegExp(r'[^0-9]'), '');
 
+    if (nome.isEmpty || email.isEmpty || senha.isEmpty || telefone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text("Por favor, preencha todos os campos."),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    await sendData(nome, email, senha, telefone);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,17 +198,13 @@ class _ContaPageState extends State<ContaPage> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 25,
-            fontFamily: 'assets/fonts/Monserrat',
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 30,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -124,399 +213,171 @@ class _ContaPageState extends State<ContaPage> {
               size: 120,
               color: Colors.white,
             ),
-
-            const SizedBox(
-              height: 60,
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0xFF8400FF),
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: nomeController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        fillColor: Colors.black,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        labelText: 'Nome',
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF979797),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(
-              height: 50,
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.email_rounded,
-                  color: Colors.white,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0xFF8400FF),
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: emailController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        fillColor: Colors.black,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        labelText: 'Email',
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF979797),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(
-              height: 50,
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.lock,
-                  color: Colors.white,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0xFF8400FF),
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: senhaController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        fillColor: Colors.black,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        labelText: 'Senha',
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF979797),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: Colors.black,
-                      title: const Text(
-                        'Selecione um País',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          color: Color.fromRGBO(132, 0, 255, 1),
-                          width: 5,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      content: SizedBox(
-                        width: double.maxFinite,
-                        child: ListView(
-                          children: [
-                            ...dddMap.keys.map((pais) {
-                              return ListTile(
-                                title: Text(
-                                  pais,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    paisSelecionado = pais;
-                                    dddSelecionado = dddMap[pais]!;
-                                    telefoneController.text =
-                                        '($dddSelecionado) ';
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            }).toList(),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.public,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0xFF8400FF),
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        enabled: false,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                        decoration: InputDecoration(
-                          fillColor: Colors.black,
-                          filled: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          ),
-                          labelText: paisSelecionado,
-                          labelStyle: const TextStyle(
-                            color: Color(0xFF979797),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.call_rounded,
-                  color: Colors.white,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0xFF8400FF),
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: telefoneController,
-                      enabled: dddSelecionado.isNotEmpty,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                      decoration: InputDecoration(
-                        fillColor: Colors.black,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        labelText: 'Número de telefone',
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF979797),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 120,
-            ),
-            Text(
-              responseMessage,
-            ),
+            const SizedBox(height: 60),
+            buildTextField('Nome', Icons.person, nomeController),
+            const SizedBox(height: 50),
+            buildTextField('Email', Icons.email_rounded, emailController),
+            const SizedBox(height: 50),
+            buildTextField('Senha', Icons.lock, senhaController,
+                obscureText: true),
+            const SizedBox(height: 50),
+            buildCountrySelector(),
+            const SizedBox(height: 50),
+            buildPhoneNumberField(),
+            const SizedBox(height: 120),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-
-          backgroundColor: const Color.fromARGB(255, 119, 0, 255),
-          shape: const CircleBorder(),
-          onPressed: () {
-            String name = nameController.text;
-            String email = emailController.text;
-            String password = passwordController.text;
-            String numero = numeroController.text;
-            if (name.isEmpty || email.isEmpty || password.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Colors.redAccent,
-                  content: Text("Preencha todos os campos"),
-                  duration: Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
-
-            sendData(name, email, password, numero);
-            responseMessage = "Conta Atualizada com sucesso!";
-            return Navigator.pop(context);
-          },
-          child:
-              const Text("Atualizar", style: TextStyle(color: Colors.white))),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-
-  Future<dynamic> sendToken(token) async {
-    final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/auth/user/verification/$token'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({'Bearer': token}),
-
         onPressed: _saveData,
         backgroundColor: const Color(0xFF8400FF),
-        child: Icon(
+        shape: const CircleBorder(),
+        child: const Icon(
           Icons.check,
           color: Colors.white,
         ),
-        shape: const CircleBorder(),
       ),
-
     );
-    if (response.statusCode != 200) {
-      return response.statusCode;
-    }
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      return data.id;
-    }
   }
 
-  Future<dynamic> sendData(name, email, password, numero) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    final id = sendToken(token);
-    final newLogin =
-        User(name: name, email: email, password: password, phone: numero);
-    final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/user/update/$id'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(newLogin.toJson()),
-    );
-    if (kDebugMode) {
-      print(response);
-    }
-    if (response.statusCode != 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.redAccent,
-          content: Text("Ops algo deu errado"),
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
+  Widget buildTextField(
+      String label, IconData icon, TextEditingController controller,
+      {bool obscureText = false}) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.white),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(color: Color(0xFF8400FF), offset: Offset(0, 2)),
+              ],
+            ),
+            child: TextField(
+              controller: controller,
+              style: const TextStyle(color: Colors.white),
+              obscureText: obscureText,
+              decoration: InputDecoration(
+                fillColor: Colors.black,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                labelText: label,
+                labelStyle: const TextStyle(color: Color(0xFF979797)),
+              ),
+            ),
+          ),
         ),
-      );
-      return response.statusCode;
-    }
+      ],
+    );
+  }
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      responseMessage = data.toString();
+  Widget buildCountrySelector() {
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Colors.black,
+              title: const Text('Selecione um País',
+                  style: TextStyle(color: Colors.white)),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(
+                    color: Color.fromRGBO(132, 0, 255, 1), width: 5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView(
+                  children: dddMap.keys.map((pais) {
+                    return ListTile(
+                      title: Text(pais,
+                          style: const TextStyle(color: Colors.white)),
+                      onTap: () {
+                        setState(() {
+                          paisSelecionado = pais;
+                          dddSelecionado = dddMap[pais]!;
+                          telefoneController.text = '($dddSelecionado) ';
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            );
+          },
+        );
+      },
+      child: Row(
+        children: [
+          const Icon(Icons.public, color: Colors.white),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(color: Color(0xFF8400FF), offset: Offset(0, 2)),
+                ],
+              ),
+              child: TextField(
+                enabled: false,
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+                decoration: InputDecoration(
+                  fillColor: Colors.black,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  labelText: paisSelecionado,
+                  labelStyle: const TextStyle(color: Color(0xFF979797)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-      nameController.clear();
-      emailController.clear();
-      passwordController.clear();
-      numeroController.clear();
-      return data;
-    }
+  Widget buildPhoneNumberField() {
+    return Row(
+      children: [
+        const Icon(Icons.call_rounded, color: Colors.white),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(color: Color(0xFF8400FF), offset: Offset(0, 2)),
+              ],
+            ),
+            child: TextField(
+              controller: telefoneController,
+              enabled: dddSelecionado.isNotEmpty,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+              decoration: InputDecoration(
+                fillColor: Colors.black,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                labelText: 'Número de telefone',
+                labelStyle: const TextStyle(color: Color(0xFF979797)),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
