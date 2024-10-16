@@ -9,14 +9,16 @@
   
     flutter:
       sdk: flutter
+    android_alarm_manager_plus: ^4.0.4
     cupertino_icons: ^1.0.6
-    http: ^0.13.5
+    http: ^1.2.2
     fancy_bottom_navigation: ^0.3.2
     table_calendar: ^3.1.2
     flutter_screenutil: ^5.0.0
-    flutter_dotenv: ^5.0.2
+    flutter_dotenv: ^5.1.0
     email_validator: '^2.1.17'
     validators: ^3.0.0
+    shared_preferences: ^2.2.0
   dev_dependencies:
     flutter_test:
       sdk: flutter
@@ -25,6 +27,7 @@
     uses-material-design: true
     
     assets:
+      - assets/.env
       - assets/VitaValoreLogo.jpeg
       - assets/Ze_gotinha_da_agua.png
       - assets/VitaValoreLogo2.png 

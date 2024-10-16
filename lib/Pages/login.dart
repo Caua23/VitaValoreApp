@@ -1,10 +1,13 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vita_valore/Pages/cadastro.dart';
 import 'package:vita_valore/models/dto/send_login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:vita_valore/principal.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -180,27 +183,66 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> sendData(email, password) async {
-    final newLogin = Login(password: password, email: email);
-    final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/auth/user/register'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(newLogin.toJson()),
+    try {
+      final newLogin = Login(password: password, email: email);
+      var url = Uri.http(dotenv.env['API_URL']!.trim(), '/auth/user/login');
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(newLogin.toJson()),
+      );
+      if (response.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.redAccent,
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            content: Text('Erro a autenticar'),
+          ),
+        );
+      }
+      if (response.statusCode == 401) {
+        _showSnackBar("Verifique os dados informados", Colors.redAccent);
+      }
+
+      if (response.statusCode == 200) {
+        var data = response.body;
+        responseMessage = data.toString();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data);
+        _showSnackBar("Login efetuado com sucesso", Colors.green);
+        emailController.clear();
+        passwordController.clear();
+        await Future.delayed(const Duration(seconds: 2));
+        Navigator.push(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Principal(),
+          ),
+        );
+        return;
+      } else {
+        _showSnackBar(response.body, Colors.redAccent);
+      }
+    } catch (e) {
+      _showSnackBar(e.toString(), Colors.redAccent);
+    }
+  }
+
+  void _showSnackBar(String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: backgroundColor,
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
-    if (response.statusCode != 200) {
-      return setState(() {
-        responseMessage = "Erro: ${response.body}";
-      });
-    }
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      responseMessage = data.toString();
-
-      emailController.clear();
-      passwordController.clear();
-      return data;
-    }
   }
 }

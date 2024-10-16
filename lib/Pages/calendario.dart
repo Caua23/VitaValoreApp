@@ -10,14 +10,17 @@ class CalendarioPage extends StatefulWidget {
 }
 
 class _CalendarioPageState extends State<CalendarioPage> {
+
   late Map<DateTime, List<Map<String, String>>> eventos;
   DateTime? diaSelecionado;
   DateTime? lastTapped;
   final Duration doubleTapDuration = const Duration(seconds: 1);
 
+
   @override
   void initState() {
     super.initState();
+
     diaSelecionado = null;
     eventos = {};
   }
@@ -55,10 +58,12 @@ class _CalendarioPageState extends State<CalendarioPage> {
     String novaHora = '';
     final ScrollController _scrollController = ScrollController();
 
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
+
           backgroundColor: const Color.fromARGB(255, 0, 0, 0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -127,10 +132,12 @@ class _CalendarioPageState extends State<CalendarioPage> {
                 ),
               );
             },
+
           ),
           actions: [
             TextButton(
               onPressed: () {
+
                 if (novoEvento.isNotEmpty && novaHora.isNotEmpty) {
                   _adicionaEvento(novoEvento, novaHora);
                   Navigator.of(context).pop();
@@ -138,11 +145,13 @@ class _CalendarioPageState extends State<CalendarioPage> {
               },
               child: const Text('Adicionar',
                   style: TextStyle(color: Colors.white)),
+
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
+
               child:
                   const Text('Cancelar', style: TextStyle(color: Colors.white)),
             ),
@@ -153,10 +162,12 @@ class _CalendarioPageState extends State<CalendarioPage> {
   }
 
   void _showRemoveEventDialog(String evento) {
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
+
           backgroundColor: const Color.fromARGB(255, 30, 30, 30),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -168,20 +179,25 @@ class _CalendarioPageState extends State<CalendarioPage> {
           content: const Text(
             'Você tem certeza que deseja remover seu lembrete?',
             style: TextStyle(color: Colors.white),
+
           ),
           actions: [
             TextButton(
               onPressed: () {
+
                 _removeEvento(evento);
                 Navigator.of(context).pop();
               },
               child: const Text('Sim', style: TextStyle(color: Colors.white)),
+
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
+
               child: const Text('Não', style: TextStyle(color: Colors.white)),
+
             ),
           ],
         );
@@ -195,6 +211,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Column(
         children: [
+
           // Calendário
           TableCalendar(
             headerStyle: HeaderStyle(
@@ -390,4 +407,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
       ),
     );
   }
+
+}
+
 }

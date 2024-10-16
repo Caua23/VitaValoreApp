@@ -1,76 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:vita_valore/Widget/agua_diaria.dart';
 import 'package:vita_valore/Widget/arc_progress.dart';
 import 'dart:math' as math;
+import 'package:vita_valore/models/agua_models.dart';
 
 class AguaPage extends StatefulWidget {
   const AguaPage({super.key});
 
   @override
   State<AguaPage> createState() => _AguaPageState();
-
-  static Widget _buildWaterIntakeRow(String time, String amount,
-      VoidCallback onPressed, IconData icon, bool isClickable) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const SizedBox(width: 50),
-        Text(
-          time,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const Spacer(),
-        Text(
-          amount,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        IconButton(
-          icon: Icon(icon, color: Colors.white),
-          onPressed: isClickable ? onPressed : null,
-        ),
-        const SizedBox(width: 30),
-      ],
-    );
-  }
 }
 
 class _AguaPageState extends State<AguaPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  double progress = 0.0;
-  final double maxProgress = math.pi;
-  List<bool> clickedIcons = List.filled(4, false);
+  int totalAguaMl = 0;
+  late AnimationController _controlador;
+  double progresso = 0.0;
+  final double progressoMaximo = math.pi;
+
+  List<AguaModels> horarios = [];
+  List<bool> iconesClicados = [];
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _controlador = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
   }
 
-  void increaseProgress(int index) {
-    if (!clickedIcons[index]) {
+  void aumentarProgresso(int indice) {
+    if (!iconesClicados[indice]) {
       setState(() {
-        clickedIcons[index] = true; // Marca o ícone como clicado
-        progress += maxProgress * 0.25; // Cada botão adiciona 25% do máximo
-        if (progress > maxProgress) {
-          progress = maxProgress;
+        iconesClicados[indice] = true;
+        progresso += progressoMaximo * 0.25;
+        if (progresso > progressoMaximo) {
+          progresso = progressoMaximo;
         }
       });
 
-      // Inicia a animação do progresso
-      _controller.reset();
-      _controller.forward();
+      _controlador.reset();
+      _controlador.forward();
     }
+  }
+
+  void distribuirAgua(int totalMl, String horarioInicio, String horarioFim) {
+    TimeOfDay? inicio = _converterHorario(horarioInicio);
+    TimeOfDay? fim = _converterHorario(horarioFim);
+
+    if (inicio == null || fim == null || totalMl <= 0) {
+      return;
+    }
+
+    int totalMinutos = _diferencaEmMinutos(inicio, fim);
+    int intervalos = totalMinutos ~/ 60;
+
+    if (intervalos > 0) {
+      int mlPorIntervalo = totalMl ~/ intervalos;
+
+      List<AguaModels> novosHorarios = [];
+      TimeOfDay horarioAtual = inicio;
+
+      for (int i = 0; i < intervalos; i++) {
+        String horarioFormatado = _formatarHorario24(horarioAtual);
+        novosHorarios
+            .add(AguaModels(time: horarioFormatado, ml: '$mlPorIntervalo'));
+
+        horarioAtual = _incrementarHorario(horarioAtual, 60);
+      }
+
+      setState(() {
+        horarios = novosHorarios;
+        iconesClicados = List.generate(horarios.length, (index) => false);
+        totalAguaMl = totalMl;
+      });
+    }
+  }
+
+  int _diferencaEmMinutos(TimeOfDay inicio, TimeOfDay fim) {
+    final minutosInicio = inicio.hour * 60 + inicio.minute;
+    final minutosFim = fim.hour * 60 + fim.minute;
+    return minutosFim - minutosInicio;
+  }
+
+  TimeOfDay _incrementarHorario(TimeOfDay horario, int minutos) {
+    final totalMinutos = horario.hour * 60 + horario.minute + minutos;
+    final novaHora = totalMinutos ~/ 60;
+    final novosMinutos = totalMinutos % 60;
+    return TimeOfDay(hour: novaHora, minute: novosMinutos);
+  }
+
+  TimeOfDay? _converterHorario(String horario) {
+    final partes = horario.split(':');
+    if (partes.length == 2) {
+      final hora = int.tryParse(partes[0]);
+      final minuto = int.tryParse(partes[1]);
+      if (hora != null && minuto != null) {
+        return TimeOfDay(hour: hora, minute: minuto);
+      }
+    }
+    return null;
+  }
+
+  String _formatarHorario24(TimeOfDay horario) {
+    String hour = horario.hour.toString().padLeft(2, '0');
+    String minute = horario.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 
   @override
@@ -81,39 +117,140 @@ class _AguaPageState extends State<AguaPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _buildHeader(),
+            _construirCabecalho(),
             AnimatedBuilder(
-              animation: _controller,
+              animation: _controlador,
               builder: (context, child) {
-                double currentProgress = progress * _controller.value;
-                return ArcProgress(progress: currentProgress);
+                double progressoAtual = progresso * _controlador.value;
+                return ArcProgress(progress: progressoAtual);
               },
             ),
-            // const Spacer(),
             const SizedBox(height: 30),
             Container(
               padding: const EdgeInsets.only(left: 48, top: 40),
               alignment: Alignment.center,
               width: 300,
-              child: const Center(
+              child: Center(
                 child: Row(
                   children: [
-                    Text("0ml", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 170),
-                    Text("2000ml", style: TextStyle(color: Colors.white)),
+                    const Text("0ml", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 30),
+                    Text(
+                      "$totalAguaMl ml",
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ],
                 ),
               ),
             ),
-            _buildWaterIntakeBox(),
-            const Spacer(),
+            const SizedBox(height: 16),
+            Expanded(
+              child: SingleChildScrollView(
+                child: _construirCaixaIngestaoAgua(),
+              ),
+            ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 119, 0, 255),
+        shape: const CircleBorder(),
+        onPressed: () {
+          _mostrarDialogoEntradaAgua(context);
+        },
+        child: const Icon(
+          Icons.add,
+          size: 30,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
-  Widget _buildHeader() {
+  void _mostrarDialogoEntradaAgua(BuildContext context) {
+    final TextEditingController controladorAgua = TextEditingController();
+    final TextEditingController controladorHorarioInicio =
+        TextEditingController();
+    final TextEditingController controladorHorarioFim = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 132, 0, 255),
+          title: const Text(
+            'Distribuir água diária',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Quantos ml deseja beber no dia?',
+                  style: TextStyle(color: Colors.white)),
+              TextField(
+                controller: controladorAgua,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'ml',
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text('Horário de início (00:00)',
+                  style: TextStyle(color: Colors.white)),
+              TextField(
+                controller: controladorHorarioInicio,
+                keyboardType: TextInputType.datetime,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: '00:00',
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text('Horário de fim (00:00)',
+                  style: TextStyle(color: Colors.white)),
+              TextField(
+                controller: controladorHorarioFim,
+                keyboardType: TextInputType.datetime,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: '00:00',
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                int totalMl = int.parse(controladorAgua.text);
+                String horarioInicio = controladorHorarioInicio.text;
+                String horarioFim = controladorHorarioFim.text;
+
+                distribuirAgua(totalMl, horarioInicio, horarioFim);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Adicionar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _construirCabecalho() {
     return Stack(
       children: [
         const Spacer(),
@@ -128,12 +265,11 @@ class _AguaPageState extends State<AguaPage>
     );
   }
 
-  Widget _buildWaterIntakeBox() {
+  Widget _construirCaixaIngestaoAgua() {
     return Transform.translate(
       offset: const Offset(0, 20),
       child: Container(
         width: 300,
-        height: 237,
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 6, 0, 12),
           borderRadius: BorderRadius.circular(20),
@@ -146,45 +282,10 @@ class _AguaPageState extends State<AguaPage>
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AguaPage._buildWaterIntakeRow(
-                "8:00",
-                "500ml",
-                () => increaseProgress(0),
-                clickedIcons[0] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[0]),
-            const SizedBox(height: 15),
-            AguaPage._buildWaterIntakeRow(
-                "12:00",
-                "500ml",
-                () => increaseProgress(1),
-                clickedIcons[1] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[1]),
-            const SizedBox(height: 15),
-            AguaPage._buildWaterIntakeRow(
-                "16:00",
-                "500ml",
-                () => increaseProgress(2),
-                clickedIcons[2] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[2]),
-            const SizedBox(height: 15),
-            AguaPage._buildWaterIntakeRow(
-                "20:00",
-                "500ml",
-                () => increaseProgress(3),
-                clickedIcons[3] ? Icons.check : Icons.add_box_outlined,
-                !clickedIcons[3]),
-          ],
+        child: AguaDiaria(
+          aguaList: horarios,
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

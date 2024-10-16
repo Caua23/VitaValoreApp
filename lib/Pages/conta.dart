@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vita_valore/models/users.dart';
 
 class ContaPage extends StatefulWidget {
   const ContaPage({super.key});
@@ -8,6 +14,7 @@ class ContaPage extends StatefulWidget {
 }
 
 class _ContaPageState extends State<ContaPage> {
+
   String paisSelecionado = 'Selecione um País';
   String dddSelecionado = '';
   final TextEditingController telefoneController = TextEditingController();
@@ -77,6 +84,7 @@ class _ContaPageState extends State<ContaPage> {
     String telefone = telefoneController.text;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +124,7 @@ class _ContaPageState extends State<ContaPage> {
               size: 120,
               color: Colors.white,
             ),
+
             const SizedBox(
               height: 60,
             ),
@@ -131,6 +140,7 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
+
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -161,6 +171,7 @@ class _ContaPageState extends State<ContaPage> {
                 ),
               ],
             ),
+
             const SizedBox(
               height: 50,
             ),
@@ -176,6 +187,7 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
+
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -206,6 +218,7 @@ class _ContaPageState extends State<ContaPage> {
                 ),
               ],
             ),
+
             const SizedBox(
               height: 50,
             ),
@@ -221,6 +234,7 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
+
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -348,6 +362,7 @@ class _ContaPageState extends State<ContaPage> {
                   ),
                 ],
               ),
+
             ),
             const SizedBox(
               height: 50,
@@ -364,6 +379,7 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
+
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -399,10 +415,51 @@ class _ContaPageState extends State<ContaPage> {
             const SizedBox(
               height: 120,
             ),
+            Text(
+              responseMessage,
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
+
+          backgroundColor: const Color.fromARGB(255, 119, 0, 255),
+          shape: const CircleBorder(),
+          onPressed: () {
+            String name = nameController.text;
+            String email = emailController.text;
+            String password = passwordController.text;
+            String numero = numeroController.text;
+            if (name.isEmpty || email.isEmpty || password.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Colors.redAccent,
+                  content: Text("Preencha todos os campos"),
+                  duration: Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+
+            sendData(name, email, password, numero);
+            responseMessage = "Conta Atualizada com sucesso!";
+            return Navigator.pop(context);
+          },
+          child:
+              const Text("Atualizar", style: TextStyle(color: Colors.white))),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  Future<dynamic> sendToken(token) async {
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/auth/user/verification/$token'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'Bearer': token}),
+
         onPressed: _saveData,
         backgroundColor: const Color(0xFF8400FF),
         child: Icon(
@@ -411,6 +468,55 @@ class _ContaPageState extends State<ContaPage> {
         ),
         shape: const CircleBorder(),
       ),
+
     );
+    if (response.statusCode != 200) {
+      return response.statusCode;
+    }
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      return data.id;
+    }
+  }
+
+  Future<dynamic> sendData(name, email, password, numero) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+    final id = sendToken(token);
+    final newLogin =
+        User(name: name, email: email, password: password, phone: numero);
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/user/update/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(newLogin.toJson()),
+    );
+    if (kDebugMode) {
+      print(response);
+    }
+    if (response.statusCode != 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text("Ops algo deu errado"),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return response.statusCode;
+    }
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      responseMessage = data.toString();
+
+      nameController.clear();
+      emailController.clear();
+      passwordController.clear();
+      numeroController.clear();
+      return data;
+    }
   }
 }

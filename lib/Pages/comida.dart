@@ -43,7 +43,9 @@ class _ComidaPageState extends State<ComidaPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: CalendarioWidget(items: items),
+              child: CalendarioWidget(
+                items: items,
+              ),
             ),
             SizedBox(height: 170.h),
             SizedBox(
@@ -70,7 +72,7 @@ class _ComidaPageState extends State<ComidaPage> {
             SizedBox(height: 10.h),
             Container(
               width: 270.w,
-              height: 280.h, // Altura fixa para o container
+              height: 280.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: const Color.fromARGB(255, 41, 39, 42),
@@ -258,6 +260,8 @@ class _ComidaPageState extends State<ComidaPage> {
                             color: getStrongColor(),
                           ));
                         });
+
+                        print(items.toString());
                         horarioController.clear();
                         tarefaController.clear();
                         Navigator.pop(context);
