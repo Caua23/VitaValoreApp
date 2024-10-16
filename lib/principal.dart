@@ -37,7 +37,7 @@ class _PrincipalState extends State<Principal> {
     verificarUsuario();
     return Scaffold(
       appBar: isCarrinho
-          ? null // Esconde o AppBar se estiver na página Carrinho
+          ? null
           : AppBar(
               toolbarHeight: 80,
               title: _selectedIndex == 2
@@ -100,25 +100,36 @@ class _PrincipalState extends State<Principal> {
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
-                      style: const ButtonStyle(
-                        shadowColor: WidgetStatePropertyAll(Colors.transparent),
-                        backgroundColor: WidgetStatePropertyAll(
-                            Color.fromARGB(255, 78, 0, 167)),
+
+                    style: const ButtonStyle(
+                      shadowColor: MaterialStatePropertyAll(Colors.transparent),
+                      backgroundColor: MaterialStatePropertyAll(
+                          Color.fromARGB(255, 78, 0, 167)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConfiguracaoPage(),
+                        ),
+                      );
+                    },
+                    child: const Row(children: [
+                      Icon(
+                        Icons.settings,
+                        color: Colors.white,
+
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ConfiguracaoPage()));
-                      },
-                      child: const Text(
+                      SizedBox(width: 20),
+                      Text(
                         "Configurações",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w600),
-                      )),
+                      ),
+                    ]),
+                  ),
                 ),
                 const SizedBox(height: 70),
                 SizedBox(
