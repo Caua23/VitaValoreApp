@@ -101,9 +101,8 @@ class _PrincipalState extends State<Principal> {
                   width: 200,
                   child: ElevatedButton(
                       style: const ButtonStyle(
-                        shadowColor:
-                            MaterialStatePropertyAll(Colors.transparent),
-                        backgroundColor: MaterialStatePropertyAll(
+                        shadowColor: WidgetStatePropertyAll(Colors.transparent),
+                        backgroundColor: WidgetStatePropertyAll(
                             Color.fromARGB(255, 78, 0, 167)),
                       ),
                       onPressed: () {
@@ -126,8 +125,8 @@ class _PrincipalState extends State<Principal> {
                   width: 200,
                   child: ElevatedButton(
                     style: const ButtonStyle(
-                      shadowColor: MaterialStatePropertyAll(Colors.transparent),
-                      backgroundColor: MaterialStatePropertyAll(
+                      shadowColor: WidgetStatePropertyAll(Colors.transparent),
+                      backgroundColor: WidgetStatePropertyAll(
                           Color.fromARGB(255, 78, 0, 167)),
                     ),
                     onPressed: () {
@@ -192,13 +191,15 @@ class _PrincipalState extends State<Principal> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     if (token != null) {
+      var url =
+          Uri.http(dotenv.env['API_URL']!, '/auth/user/verification/$token');
       final response = await http.post(
-        Uri.parse('${dotenv.env['API_URL']}/auth/user/verification/$token'),
+        url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({'Bearer': token}),
+        body: {},
       );
       if (response.statusCode != 200) {
         Navigator.push(

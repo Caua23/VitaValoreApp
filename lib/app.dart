@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vita_valore/Pages/conta.dart';
+// import 'package:vita_valore/Pages/conta.dart';
 
 import 'package:vita_valore/principal.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
