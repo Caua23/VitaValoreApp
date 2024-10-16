@@ -6,8 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 /*
   Feito para o Iphone SE 
-  
-
   Repositorio :
   https://github.com/Caua23/VitaValoreApp
   Meu Github:
@@ -16,13 +14,10 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 */
 
 void main() async {
+  await dotenv.load(fileName: 'assets/.env');
   try {
     WidgetsFlutterBinding.ensureInitialized();
     await AndroidAlarmManager.initialize();
-    await dotenv.load(fileName: 'assets/.env');
-    if (kDebugMode) {
-      print('${dotenv.env['API_URL']}/auth/user/register esta funcionando');
-    }
   } catch (e) {
     if (kDebugMode) {
       print('Erro em algo: $e');

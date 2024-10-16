@@ -34,14 +34,17 @@ class _AguaPageState extends State<AguaPage>
     if (!iconesClicados[indice]) {
       setState(() {
         iconesClicados[indice] = true;
-        progresso += progressoMaximo * 0.25;
+
+        double incremento = progressoMaximo / horarios.length;
+
+        progresso += incremento;
+
         if (progresso > progressoMaximo) {
           progresso = progressoMaximo;
         }
       });
 
-      _controlador.reset();
-      _controlador.forward();
+      _controlador.forward(from: 0);
     }
   }
 
@@ -134,18 +137,20 @@ class _AguaPageState extends State<AguaPage>
                 child: Row(
                   children: [
                     const Text("0ml", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 30),
+                    const Spacer(),
                     Text(
                       "$totalAguaMl ml",
                       style: const TextStyle(color: Colors.white),
                     ),
+                    const SizedBox(width: 20),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
                 child: _construirCaixaIngestaoAgua(),
               ),
             ),
@@ -283,7 +288,9 @@ class _AguaPageState extends State<AguaPage>
           ],
         ),
         child: AguaDiaria(
+          iconesClicados: iconesClicados,
           aguaList: horarios,
+          onIconPressed: aumentarProgresso,
         ),
       ),
     );

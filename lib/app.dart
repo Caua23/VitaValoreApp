@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vita_valore/Pages/calendario.dart';
-import 'package:vita_valore/Pages/configuracao.dart';
-import 'package:vita_valore/Pages/login_sign.dart';
-
 import 'package:vita_valore/principal.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

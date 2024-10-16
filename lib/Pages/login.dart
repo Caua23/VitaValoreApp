@@ -19,7 +19,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  var responseMessage = "";
+  String responseMessage = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,91 +37,24 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const Spacer(),
-            const Row(children: [
-              SizedBox(width: 30),
-              SizedBox(
-                height: 30,
-                width: 325,
-                child: Text(
-                  "Informe seus dados",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    fontFamily: 'assets/fonts/Monserrat',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ]),
-            const Spacer(),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 132, 0, 255),
-                    offset: Offset(-2.5, 2),
-                  ),
-                ],
-              ),
-              child: SizedBox(
-                height: 50,
-                width: 325,
-                child: TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    fillColor: Colors.black,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                    labelText: "Email",
-                    labelStyle: const TextStyle(
-                        color: Color.fromARGB(255, 151, 151, 151)),
-                  ),
-                ),
+            const Text(
+              "Informe seus dados",
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 255, 255),
+                fontFamily: 'assets/fonts/Monserrat',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const Spacer(),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 132, 0, 255),
-                    offset: Offset(-2.5, 2),
-                  ),
-                ],
-              ),
-              child: SizedBox(
-                height: 50,
-                width: 325,
-                child: TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    fillColor: Colors.black,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                    labelText: "Password",
-                    labelStyle: const TextStyle(
-                        color: Color.fromARGB(255, 151, 151, 151)),
-                  ),
-                ),
-              ),
-            ),
+            _buildTextField(emailController, "Email", false),
+            const Spacer(),
+            _buildTextField(passwordController, "Password", true),
             const Spacer(),
             ElevatedButton(
               style: const ButtonStyle(
                 backgroundColor:
-                    MaterialStatePropertyAll(Color.fromARGB(255, 0, 0, 0)),
+                    WidgetStatePropertyAll(Color.fromARGB(255, 0, 0, 0)),
               ),
               onPressed: () {
                 Navigator.push(
@@ -144,26 +78,13 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               style: const ButtonStyle(
                 backgroundColor:
-                    MaterialStatePropertyAll(Color.fromARGB(255, 132, 0, 255)),
-                padding: MaterialStatePropertyAll(
-                  EdgeInsets.only(left: 70, right: 70, bottom: 20, top: 20),
+                    WidgetStatePropertyAll(Color.fromARGB(255, 132, 0, 255)),
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.all(20),
                 ),
               ),
               onPressed: () {
-                String password = passwordController.text;
-
-                String email = emailController.text;
-
-                if (password == "" || email == "") {
-                  return setState(() {
-                    responseMessage = "Existe campos vazios Verifique";
-                  });
-                }
-                if (!EmailValidator.validate(email)) {
-                  return setState(() {
-                    responseMessage = "E-mail inválido";
-                  });
-                }
+                _handleLogin();
               },
               child: const Text(
                 "Login",
@@ -182,7 +103,63 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> sendData(email, password) async {
+  Widget _buildTextField(
+      TextEditingController controller, String label, bool obscure) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Color.fromARGB(255, 132, 0, 255),
+            offset: Offset(-2.5, 2),
+          ),
+        ],
+      ),
+      child: SizedBox(
+        height: 50,
+        width: 325,
+        child: TextField(
+          controller: controller,
+          obscureText: obscure,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            fillColor: Colors.black,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            labelText: label,
+            labelStyle:
+                const TextStyle(color: Color.fromARGB(255, 151, 151, 151)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleLogin() {
+    String email = emailController.text.trim();
+    String password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        responseMessage = "Existem campos vazios. Verifique.";
+      });
+      return;
+    }
+
+    if (!EmailValidator.validate(email)) {
+      setState(() {
+        responseMessage = "E-mail inválido.";
+      });
+      return;
+    }
+
+    sendData(email, password);
+  }
+
+  Future<void> sendData(String email, String password) async {
     try {
       final newLogin = Login(password: password, email: email);
       var url = Uri.http(dotenv.env['API_URL']!.trim(), '/auth/user/login');
@@ -193,42 +170,45 @@ class _LoginPageState extends State<LoginPage> {
         },
         body: jsonEncode(newLogin.toJson()),
       );
-      if (response.statusCode != 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.redAccent,
-            duration: Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-            content: Text('Erro a autenticar'),
-          ),
-        );
-      }
-      if (response.statusCode == 401) {
-        _showSnackBar("Verifique os dados informados", Colors.redAccent);
-      }
 
       if (response.statusCode == 200) {
         var data = response.body;
-        responseMessage = data.toString();
+        print("Resposta do servidor: $data");
+
+        // Armazenando o token corretamente
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data);
+
         _showSnackBar("Login efetuado com sucesso", Colors.green);
-        emailController.clear();
-        passwordController.clear();
-        await Future.delayed(const Duration(seconds: 2));
-        Navigator.push(
-          // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => const Principal(),
-          ),
+          MaterialPageRoute(builder: (context) => const Principal()),
         );
-        return;
       } else {
-        _showSnackBar(response.body, Colors.redAccent);
+        _handleErrorResponse(response);
       }
     } catch (e) {
-      _showSnackBar(e.toString(), Colors.redAccent);
+      _showSnackBar("Erro: ${e.toString()}", Colors.redAccent);
+    }
+  }
+
+  void _handleErrorResponse(http.Response response) {
+    String errorMessage = "Erro ao autenticar";
+
+    try {
+      var errorData = jsonDecode(response.body);
+      if (errorData['message'] != null) {
+        errorMessage = errorData['message'];
+      }
+    } catch (e) {
+      return;
+    }
+
+    if (response.statusCode == 401) {
+      _showSnackBar(
+          "Verifique os dados informados: $errorMessage", Colors.redAccent);
+    } else {
+      _showSnackBar("Erro: $errorMessage", Colors.redAccent);
     }
   }
 

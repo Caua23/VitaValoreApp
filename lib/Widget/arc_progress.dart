@@ -39,7 +39,7 @@ class ProgressArc extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const rect = Rect.fromLTWH(0, 0, 200, 200);
     const startAngle = -math.pi;
-    final sweepAngle = arc; // Certificando que sempre haverá valor para o arco
+    final sweepAngle = arc;
     const useCenter = false;
 
     final paint = Paint()
