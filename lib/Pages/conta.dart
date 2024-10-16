@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vita_valore/models/users.dart';
 
@@ -14,7 +14,6 @@ class ContaPage extends StatefulWidget {
 }
 
 class _ContaPageState extends State<ContaPage> {
-
   String paisSelecionado = 'Selecione um País';
   String dddSelecionado = '';
   final TextEditingController telefoneController = TextEditingController();
@@ -84,7 +83,6 @@ class _ContaPageState extends State<ContaPage> {
     String telefone = telefoneController.text;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +122,6 @@ class _ContaPageState extends State<ContaPage> {
               size: 120,
               color: Colors.white,
             ),
-
             const SizedBox(
               height: 60,
             ),
@@ -140,7 +137,6 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -171,7 +167,6 @@ class _ContaPageState extends State<ContaPage> {
                 ),
               ],
             ),
-
             const SizedBox(
               height: 50,
             ),
@@ -187,7 +182,6 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -218,7 +212,6 @@ class _ContaPageState extends State<ContaPage> {
                 ),
               ],
             ),
-
             const SizedBox(
               height: 50,
             ),
@@ -234,7 +227,6 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -362,7 +354,6 @@ class _ContaPageState extends State<ContaPage> {
                   ),
                 ],
               ),
-
             ),
             const SizedBox(
               height: 50,
@@ -379,7 +370,6 @@ class _ContaPageState extends State<ContaPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -415,39 +405,18 @@ class _ContaPageState extends State<ContaPage> {
             const SizedBox(
               height: 120,
             ),
-            Text(
-              responseMessage,
-            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-
-          backgroundColor: const Color.fromARGB(255, 119, 0, 255),
-          shape: const CircleBorder(),
-          onPressed: () {
-            String name = nameController.text;
-            String email = emailController.text;
-            String password = passwordController.text;
-            String numero = numeroController.text;
-            if (name.isEmpty || email.isEmpty || password.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Colors.redAccent,
-                  content: Text("Preencha todos os campos"),
-                  duration: Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
-
-            sendData(name, email, password, numero);
-            responseMessage = "Conta Atualizada com sucesso!";
-            return Navigator.pop(context);
-          },
-          child:
-              const Text("Atualizar", style: TextStyle(color: Colors.white))),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        onPressed: _saveData,
+        backgroundColor: const Color(0xFF8400FF),
+        shape: const CircleBorder(),
+        child: const Icon(
+          Icons.check,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 
@@ -458,18 +427,9 @@ class _ContaPageState extends State<ContaPage> {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'Bearer': token}),
-
-        onPressed: _saveData,
-        backgroundColor: const Color(0xFF8400FF),
-        child: Icon(
-          Icons.check,
-          color: Colors.white,
-        ),
-        shape: const CircleBorder(),
-      ),
-
+      body: {},
     );
+
     if (response.statusCode != 200) {
       return response.statusCode;
     }
@@ -486,10 +446,12 @@ class _ContaPageState extends State<ContaPage> {
     final id = sendToken(token);
     final newLogin =
         User(name: name, email: email, password: password, phone: numero);
+    var url = Uri.http(dotenv.env['API_URL']!.trim(), "/user//update/$id");
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/user/update/$id'),
+      url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
       },
       body: jsonEncode(newLogin.toJson()),
     );
@@ -497,6 +459,7 @@ class _ContaPageState extends State<ContaPage> {
       print(response);
     }
     if (response.statusCode != 200) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.redAccent,
@@ -510,12 +473,12 @@ class _ContaPageState extends State<ContaPage> {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      responseMessage = data.toString();
+      // responseMessage = data.toString();
 
-      nameController.clear();
+      nomeController.clear();
       emailController.clear();
-      passwordController.clear();
-      numeroController.clear();
+      senhaController.clear();
+      telefoneController.clear();
       return data;
     }
   }
