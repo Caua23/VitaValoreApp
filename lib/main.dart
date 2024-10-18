@@ -7,17 +7,23 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 /*
   Feito para o Iphone SE 
   Repositorio :
-  https://github.com/Caua23/VitaValoreApp
+  https://github.com/Caua23/VitaValoreApp     
   Meu Github:
   https://github.com/Caua23
   caso de erro verificar o arquivo CasodeERRO.md
+  aconcelho a rodar o codigo no terminal , com o seguinte codigo:
+  -
+  flutter run -d chrome --web-port=3002 --web-hostname=localhost
+  -
+  isso faz com que o app seja carregado na porta 3002 que ja vem preconfigurada 
+  no servidor java/Spring
 */
 
 void main() async {
-  await dotenv.load(fileName: 'assets/.env');
   try {
-    WidgetsFlutterBinding.ensureInitialized();
-    await AndroidAlarmManager.initialize();
+    await dotenv.load(fileName: 'assets/.env');
+    // WidgetsFlutterBinding.ensureInitialized();
+    // await AndroidAlarmManager.initialize();
   } catch (e) {
     if (kDebugMode) {
       print('Erro em algo: $e');

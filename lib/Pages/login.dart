@@ -173,9 +173,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         var data = response.body;
-        print("Resposta do servidor: $data");
 
-        // Armazenando o token corretamente
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data);
 
